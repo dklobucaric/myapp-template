@@ -20,6 +20,7 @@ MainWindow
 ├── Template Dashboard
 ├── Functional Settings Dialog
 ├── DiagnosticsManager
+├── UpdateManager
 └── Status Bar
 ```
 
@@ -64,3 +65,11 @@ and private runtime paths, and rotates `app.log` before it grows without bound.
 runtime summary, a safe configuration summary and a bounded, redacted excerpt
 of the current log. It never copies `config.json`, licenses, passwords, tokens
 or complete home-directory paths. The archive is not uploaded by the app.
+
+## Update manifest checks
+
+`UpdateManager` uses Qt Network to request the channel manifest asynchronously. It validates
+identity and compatibility, compares semantic versions and persists only a redacted terminal
+state in `update-state.json`. `UpdateManager` owns recurring automatic scheduling from persisted
+elapsed time and `MainWindow` exposes manual checks through **Help → Check for Updates**. v0.1.4 has no download or
+installation path. See [`UPDATES.md`](UPDATES.md).

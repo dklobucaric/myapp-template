@@ -1,6 +1,6 @@
 # Manual Test Checklist
 
-## v0.1.3 Logging and Safe Diagnostics
+## v0.1.4 Update foundation, logging and safe diagnostics
 
 - [ ] App starts from any working directory.
 - [ ] Template Dashboard shows dynamic app name, product ID and environment.
@@ -22,9 +22,18 @@
 
 - [ ] Diagnostics: With logging enabled, app startup creates `logs/app.log`.
 - [ ] Diagnostics: Set log level to `error`; normal info activity is not appended.
+- [ ] Diagnostics: Change log level from `error` to `info`, Apply, reopen Settings and restart; it remains `info`.
 - [ ] Diagnostics: Disable logging, restart and confirm no new log lines are written.
 - [ ] Diagnostics: Open Logs Folder opens the AppData `logs` directory.
 - [ ] Diagnostics: Create Safe Support Package creates a local ZIP and reports its path.
 - [ ] Diagnostics: ZIP contains README, runtime summary, config summary and log excerpt only.
 - [ ] Diagnostics: ZIP does not contain config.json, license files, a known token/password/serial
       test value or the full home-directory path.
+
+
+- [ ] Start `./scripts/run-dev-services.sh`; use **Help → Check for Updates**.
+- [ ] Development manifest reports the mock 0.1.5 update and refreshes Dashboard and Status Bar.
+- [ ] Check result does not download or install an artifact.
+- [ ] Stop mock services and confirm the next manual check reports a safe network failure.
+- [ ] Set automatic update checks to five minutes and confirm a background check occurs without a manual action.
+- [ ] `update-state.json` has a timestamp and redacted manifest URL/message; it has no token query value.

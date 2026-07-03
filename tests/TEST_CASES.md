@@ -34,3 +34,15 @@
 | DIA-001 | Create safe support package | Local standard ZIP is created; no upload occurs. |
 | DIA-002 | Inspect package content | It includes runtime/config summaries and a bounded log excerpt, not config.json or licenses. |
 | DIA-003 | Sensitive/path regression | ZIP has no known secrets, token query values or full home path. |
+
+
+## Update foundation
+
+| ID | Scenario | Expected result |
+| --- | --- | --- |
+| UPD-001 | Valid newer manifest | Update available with current and available version. |
+| UPD-002 | Manifest version equals current version | Up-to-date state is reported. |
+| UPD-003 | Invalid or missing manifest fields | Safe invalid-manifest result; no crash. |
+| UPD-004 | Platform/architecture mismatch | Unsupported-platform result. |
+| UPD-005 | CDN unavailable | Network error result is persisted without query secrets. |
+| UPD-006 | Manual check | Dashboard and Status Bar refresh; no artifact is downloaded. |

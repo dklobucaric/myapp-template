@@ -37,9 +37,12 @@
 
 ### v0.1.4 — Update foundation
 
-- UpdateManager
-- Mock CDN manifest fetch
-- Update Indicator in the Status Bar
+- `UpdateManager` asynchronous mock CDN manifest fetch
+- Semantic-version comparison and manifest validation
+- Manual and interval-aware automatic checks
+- Redacted persisted `update-state.json`
+- Dashboard and Status Bar update result display
+- No artifact download or installation yet
 
 ### v0.1.5 — License foundation
 

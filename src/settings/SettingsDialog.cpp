@@ -430,10 +430,11 @@ QWidget *SettingsDialog::createDiagnosticsPage()
 
     m_loggingEnabledCheck = new QCheckBox(tr("Enable logging"), page);
     m_loggingLevelCombo = new QComboBox(page);
-    m_loggingLevelCombo->addItem(QStringLiteral("error"));
-    m_loggingLevelCombo->addItem(QStringLiteral("warning"));
-    m_loggingLevelCombo->addItem(QStringLiteral("info"));
-    m_loggingLevelCombo->addItem(QStringLiteral("debug"));
+    m_loggingLevelCombo->setObjectName(QStringLiteral("loggingLevelCombo"));
+    m_loggingLevelCombo->addItem(QStringLiteral("error"), QStringLiteral("error"));
+    m_loggingLevelCombo->addItem(QStringLiteral("warning"), QStringLiteral("warning"));
+    m_loggingLevelCombo->addItem(QStringLiteral("info"), QStringLiteral("info"));
+    m_loggingLevelCombo->addItem(QStringLiteral("debug"), QStringLiteral("debug"));
 
     form->addRow(QString(), m_loggingEnabledCheck);
     form->addRow(tr("Log level:"), m_loggingLevelCombo);
@@ -518,7 +519,10 @@ void SettingsDialog::loadControlsFromConfig(const AppConfig &config)
     m_configPathEdit->setText(config.userConfigPath);
 
     const auto setComboData = [](QComboBox *combo, const QString &value) {
-        const int index = combo->findData(value);
+        int index = combo->findData(value);
+        if (index < 0) {
+            index = combo->findText(value, Qt::MatchFixedString);
+        }
         combo->setCurrentIndex(index >= 0 ? index : 0);
     };
 

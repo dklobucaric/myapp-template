@@ -20,7 +20,7 @@ products:
 
 ## Development status
 
-Current version: `0.1.3`
+Current version: `0.1.4`
 
 Primary development platform: Linux.
 
@@ -50,6 +50,12 @@ uses the correct development, staging or production defaults unless the user
 explicitly overrides a value.
 
 See [`docs/SETTINGS.md`](docs/SETTINGS.md) for the complete behavior.
+
+## Updates
+
+**Help → Check for Updates** checks the active mock or configured CDN manifest,
+updates the Dashboard and Status Bar, and persists a redacted local check state.
+It does not download or install an artifact yet. See [`docs/UPDATES.md`](docs/UPDATES.md).
 
 ## Logging and diagnostics
 
