@@ -6,6 +6,8 @@
 #include <QSysInfo>
 #include <QVBoxLayout>
 
+#include "core/AppLogger.h"
+
 TemplateDashboard::TemplateDashboard(
     const AppConfig &config,
     const QStringList &warnings,
@@ -89,7 +91,8 @@ TemplateDashboard::TemplateDashboard(
         {
             tr("Logging: %1 (%2)")
                 .arg(config.loggingEnabled ? tr("Enabled") : tr("Disabled"), config.loggingLevel),
-            tr("Diagnostics bundle support: planned for version 0.1.3")
+            tr("Logs: %1").arg(AppLogger::logDirectoryFor(config)),
+            tr("Safe support package: available in Settings → Diagnostics")
         }
     ));
 

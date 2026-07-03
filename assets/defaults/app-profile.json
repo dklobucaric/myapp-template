@@ -4,7 +4,7 @@
   "appId": "hr.ddlab.myapp-template",
   "productId": "hr.ddlab.myapp-template",
   "vendor": "DD-Lab",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "environment": "development",
   "defaults": {
     "theme": "system",

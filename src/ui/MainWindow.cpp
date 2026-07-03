@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QStatusBar>
 
+#include "core/AppLogger.h"
 #include "core/ThemeManager.h"
 #include "settings/SettingsDialog.h"
 #include "workspace/TemplateDashboard.h"
@@ -127,6 +128,7 @@ void MainWindow::rebuildDashboard()
 void MainWindow::applyConfiguration(const AppConfig &config)
 {
     m_config = config;
+    AppLogger::configure(m_config);
     ThemeManager::apply(m_config);
 
     setWindowTitle(m_config.appName);
@@ -162,6 +164,7 @@ void MainWindow::showSettingsDialog()
 
 void MainWindow::showUpdatePlaceholder()
 {
+    AppLogger::info(QStringLiteral("app"), QStringLiteral("Update placeholder opened."));
     QMessageBox::information(
         this,
         tr("Updates"),
@@ -173,6 +176,7 @@ void MainWindow::showUpdatePlaceholder()
 
 void MainWindow::showLicensePlaceholder()
 {
+    AppLogger::info(QStringLiteral("app"), QStringLiteral("License placeholder opened."));
     QMessageBox::information(
         this,
         tr("License Status"),
@@ -184,6 +188,7 @@ void MainWindow::showLicensePlaceholder()
 
 void MainWindow::showAboutDialog()
 {
+    AppLogger::debug(QStringLiteral("app"), QStringLiteral("About dialog opened."));
     QMessageBox::about(
         this,
         tr("About %1").arg(m_config.appName),

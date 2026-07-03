@@ -26,13 +26,14 @@
 - ThemeManager application appearance subsystem
 - Additional configuration reset and preview tests
 
+### v0.1.3 — Logging and safe diagnostics
+
+- Local structured logger with level filtering, redaction and rotation
+- Diagnostics Settings actions for Logs Folder and Safe Support Package
+- Local standard ZIP export with redacted runtime/config/log data
+- Automated logging and diagnostics regression tests
+
 ## Planned
-
-### v0.1.3 — Logging and diagnostics
-
-- Structured logs
-- Diagnostics Settings Page actions
-- Support bundle export
 
 ### v0.1.4 — Update foundation
 

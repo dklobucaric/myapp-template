@@ -1,6 +1,6 @@
 # Manual Test Checklist
 
-## v0.1.2 Functional Settings
+## v0.1.3 Logging and Safe Diagnostics
 
 - [ ] App starts from any working directory.
 - [ ] Template Dashboard shows dynamic app name, product ID and environment.
@@ -19,3 +19,12 @@
 - [ ] User override in runtime `config.json` appears after restart.
 - [ ] Malformed runtime config does not crash the application.
 - [ ] `./scripts/test.sh debug` passes.
+
+- [ ] Diagnostics: With logging enabled, app startup creates `logs/app.log`.
+- [ ] Diagnostics: Set log level to `error`; normal info activity is not appended.
+- [ ] Diagnostics: Disable logging, restart and confirm no new log lines are written.
+- [ ] Diagnostics: Open Logs Folder opens the AppData `logs` directory.
+- [ ] Diagnostics: Create Safe Support Package creates a local ZIP and reports its path.
+- [ ] Diagnostics: ZIP contains README, runtime summary, config summary and log excerpt only.
+- [ ] Diagnostics: ZIP does not contain config.json, license files, a known token/password/serial
+      test value or the full home-directory path.

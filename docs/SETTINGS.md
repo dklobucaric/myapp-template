@@ -63,9 +63,14 @@ connection checks arrive with LicenseManager.
 
 - Logging enabled
 - Log level
+- Open Logs Folder
+- Create Safe Support Package
 
-Structured logs and diagnostics bundle export arrive in the diagnostics
-milestone.
+Logging is local-only and changes take effect immediately after Apply or OK.
+The support package is created locally as a ZIP; the application never uploads
+it automatically. It contains safe summaries and a redacted bounded log excerpt,
+not a copy of `config.json`, license data, credentials, tokens or full home paths.
+See [`DIAGNOSTICS.md`](DIAGNOSTICS.md) for details.
 
 ### Advanced
 
