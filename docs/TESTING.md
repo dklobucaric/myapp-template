@@ -23,8 +23,9 @@ CTest.
 - preview configuration uses the baseline correctly when overrides change
 - logging-level filtering, redaction and rotation
 - safe diagnostics ZIP creation without secret values or private home paths
+- update manifest success, invalid-data, compatibility, semantic-version and network-failure cases
 
-## Manual smoke test for v0.1.3
+## Manual smoke test for v0.1.4
 
 1. Start the app normally.
 2. Open **Settings → Appearance** and switch between System, Light and Dark.
@@ -44,4 +45,12 @@ CTest.
     `README.txt`, `runtime-summary.txt`, `config-summary.json` and `log-excerpt.txt`.
 13. Confirm the package was not uploaded anywhere and does not contain known credentials,
     serial values or a full home-directory path.
-14. Run `./scripts/test.sh debug` and confirm all tests pass.
+14. Start `./scripts/run-dev-services.sh`, then use **Help → Check for Updates**.
+15. Confirm the development mock manifest reports an available version, updates the Dashboard
+    and Status Bar, and does not download or install anything.
+16. Stop mock services and check again; confirm a non-secret network error is shown and stored.
+17. Set automatic checks to five minutes, leave the app open and confirm the next background
+    check updates the Dashboard and Status Bar without using the manual menu action.
+18. On **Settings → Diagnostics**, change the log level from `error` to `info`, click Apply,
+    and confirm the selection remains `info` after reopening Settings and restarting the app.
+17. Run `./scripts/test.sh debug` and confirm all tests pass.

@@ -355,6 +355,11 @@ QJsonObject ConfigManager::appProfileDefaultsAsConfig(
         }
     );
 
+    const QJsonObject features = objectValue(appProfile, QStringLiteral("features"));
+    if (!features.isEmpty()) {
+        config.insert(QStringLiteral("features"), features);
+    }
+
     return config;
 }
 

@@ -19,7 +19,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Our built-in JSON profiles are embedded through the .qrc file below.
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
 
 qt_standard_project_setup()
 
@@ -34,6 +34,8 @@ set(MYAPP_TEMPLATE_CORE_SOURCES
   src/core/ConfigManager.h
   src/core/DiagnosticsManager.cpp
   src/core/DiagnosticsManager.h
+  src/updates/UpdateManager.cpp
+  src/updates/UpdateManager.h
 )
 
 qt_add_executable(myapp-template
@@ -59,6 +61,7 @@ target_link_libraries(myapp-template
   PRIVATE
     Qt6::Core
     Qt6::Widgets
+    Qt6::Network
 )
 
 target_compile_definitions(myapp-template
@@ -91,6 +94,7 @@ if(BUILD_TESTING)
     PRIVATE
       Qt6::Core
       Qt6::Test
+    Qt6::Network
   )
 
   add_test(NAME ConfigManagerTests COMMAND config-manager-tests)
@@ -110,7 +114,52 @@ if(BUILD_TESTING)
     PRIVATE
       Qt6::Core
       Qt6::Test
+    Qt6::Network
   )
 
   add_test(NAME LoggingDiagnosticsTests COMMAND logging-diagnostics-tests)
+
+  qt_add_executable(update-manager-tests
+    tests/unit/UpdateManagerTest.cpp
+    ${MYAPP_TEMPLATE_CORE_SOURCES}
+    ${MYAPP_TEMPLATE_RESOURCES}
+  )
+
+  target_include_directories(update-manager-tests
+    PRIVATE
+      "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  )
+
+  target_link_libraries(update-manager-tests
+    PRIVATE
+      Qt6::Core
+      Qt6::Test
+      Qt6::Network
+  )
+
+  add_test(NAME UpdateManagerTests COMMAND update-manager-tests)
+
+  qt_add_executable(settings-dialog-tests
+    tests/unit/SettingsDialogTest.cpp
+    src/settings/SettingsDialog.cpp
+    src/settings/SettingsDialog.h
+    ${MYAPP_TEMPLATE_CORE_SOURCES}
+    ${MYAPP_TEMPLATE_RESOURCES}
+  )
+
+  target_include_directories(settings-dialog-tests
+    PRIVATE
+      "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  )
+
+  target_link_libraries(settings-dialog-tests
+    PRIVATE
+      Qt6::Core
+      Qt6::Widgets
+      Qt6::Test
+      Qt6::Network
+  )
+
+  add_test(NAME SettingsDialogTests COMMAND settings-dialog-tests)
+  set_tests_properties(SettingsDialogTests PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
 endif()

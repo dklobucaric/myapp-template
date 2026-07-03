@@ -4,6 +4,29 @@ All notable changes to this project are documented in this file.
 
 ## Unreleased
 
+## [0.1.4] - 2026-07-03
+
+### Added
+
+- `UpdateManager` with asynchronous mock CDN manifest checks.
+- Manifest validation for schema, product, channel, platform, architecture, semantic version, artifact metadata and digest shape.
+- Manual **Help → Check for Updates** flow plus recurring interval-aware automatic checks that reschedule after Settings changes and terminal results.
+- Fixed Diagnostics log-level controls so an applied `info`, `warning` or `debug` choice does not snap back to `error`.
+- Redacted atomically persisted `update-state.json`.
+- Dashboard and Status Bar update result display.
+- UpdateManager automated tests and `docs/UPDATES.md`.
+
+### Changed
+
+- Linux distribution identifiers are normalized to the shared `linux` artifact
+  family so the update checker resolves the portable CDN path on Linux Mint,
+  Ubuntu, Fedora and similar systems.
+- Mock update release advanced to `0.1.5` for the v0.1.4 application build.
+
+### Deferred
+
+- Artifact download, SHA-256 content verification, installation and restart remain out of scope.
+
 ## [0.1.3] - 2026-07-03
 
 ### Added
