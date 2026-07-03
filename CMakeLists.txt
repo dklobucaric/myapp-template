@@ -34,6 +34,8 @@ set(MYAPP_TEMPLATE_CORE_SOURCES
   src/core/ConfigManager.h
   src/core/DiagnosticsManager.cpp
   src/core/DiagnosticsManager.h
+  src/licensing/LicenseManager.cpp
+  src/licensing/LicenseManager.h
   src/updates/UpdateManager.cpp
   src/updates/UpdateManager.h
 )
@@ -138,6 +140,26 @@ if(BUILD_TESTING)
   )
 
   add_test(NAME UpdateManagerTests COMMAND update-manager-tests)
+
+  qt_add_executable(license-manager-tests
+    tests/unit/LicenseManagerTest.cpp
+    ${MYAPP_TEMPLATE_CORE_SOURCES}
+    ${MYAPP_TEMPLATE_RESOURCES}
+  )
+
+  target_include_directories(license-manager-tests
+    PRIVATE
+      "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  )
+
+  target_link_libraries(license-manager-tests
+    PRIVATE
+      Qt6::Core
+      Qt6::Test
+      Qt6::Network
+  )
+
+  add_test(NAME LicenseManagerTests COMMAND license-manager-tests)
 
   qt_add_executable(settings-dialog-tests
     tests/unit/SettingsDialogTest.cpp

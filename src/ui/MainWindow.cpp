@@ -38,6 +38,36 @@ QString updateIndicatorText(const UpdateCheckResult &result, const AppConfig &co
     }
     return QObject::tr("Updates: %1").arg(config.updateChannel);
 }
+
+QString licenseIndicatorText(const LicenseCheckResult &result)
+{
+    switch (result.status) {
+    case LicenseStatus::Checking:
+        return QObject::tr("License: Checking…");
+    case LicenseStatus::Active:
+        return QObject::tr("License: Active");
+    case LicenseStatus::Grace:
+        return QObject::tr("License: Grace");
+    case LicenseStatus::Expired:
+        return QObject::tr("License: Expired");
+    case LicenseStatus::Revoked:
+        return QObject::tr("License: Revoked");
+    case LicenseStatus::OfflineGrace:
+        return QObject::tr("License: Offline grace");
+    case LicenseStatus::VerificationRequired:
+        return QObject::tr("License: Verify online");
+    case LicenseStatus::NetworkError:
+        return QObject::tr("License: Check failed");
+    case LicenseStatus::InvalidResponse:
+        return QObject::tr("License: Response invalid");
+    case LicenseStatus::Disabled:
+        return QObject::tr("License: Disabled");
+    case LicenseStatus::NotChecked:
+        return QObject::tr("License: Not checked");
+    }
+    return QObject::tr("License: Unknown");
+}
+
 }
 
 MainWindow::MainWindow(
@@ -49,7 +79,9 @@ MainWindow::MainWindow(
     , m_config(config)
     , m_configurationWarnings(configurationWarnings)
     , m_updateManager(new UpdateManager(m_config, this))
+    , m_licenseManager(new LicenseManager(m_config, this))
     , m_updateResult(m_updateManager->lastResult())
+    , m_licenseResult(m_licenseManager->lastResult())
 {
     ThemeManager::apply(m_config);
 
@@ -81,8 +113,30 @@ MainWindow::MainWindow(
         }
     });
 
+    connect(m_licenseManager, &LicenseManager::checkStarted, this, [this] {
+        m_licenseResult = m_licenseManager->lastResult();
+        refreshStatusBar();
+        rebuildDashboard();
+        if (m_checkLicenseAction != nullptr) {
+            m_checkLicenseAction->setEnabled(false);
+        }
+    });
+    connect(m_licenseManager, &LicenseManager::checkCompleted, this, [this](const LicenseCheckResult &result) {
+        m_licenseResult = result;
+        refreshStatusBar();
+        rebuildDashboard();
+        if (m_checkLicenseAction != nullptr) {
+            m_checkLicenseAction->setEnabled(true);
+        }
+        if (m_manualLicenseCheck) {
+            m_manualLicenseCheck = false;
+            showLicenseResultMessage(result);
+        }
+    });
+
     statusBar()->setVisible(m_config.showStatusBar);
     QTimer::singleShot(250, this, [this] { m_updateManager->startAutomaticChecks(); });
+    QTimer::singleShot(400, this, [this] { m_licenseManager->startAutomaticChecks(); });
 }
 
 void MainWindow::createMenuBar()
@@ -118,8 +172,8 @@ void MainWindow::createMenuBar()
     m_checkUpdatesAction = helpMenu->addAction(tr("Check for &Updates"));
     connect(m_checkUpdatesAction, &QAction::triggered, this, [this] { checkForUpdates(); });
 
-    auto *licenseStatusAction = helpMenu->addAction(tr("&License Status"));
-    connect(licenseStatusAction, &QAction::triggered, this, [this] { showLicensePlaceholder(); });
+    m_checkLicenseAction = helpMenu->addAction(tr("Check &License Status"));
+    connect(m_checkLicenseAction, &QAction::triggered, this, [this] { checkLicenseStatus(); });
 
     helpMenu->addSeparator();
     auto *aboutAction = helpMenu->addAction(tr("&About %1").arg(m_config.appName));
@@ -129,7 +183,7 @@ void MainWindow::createMenuBar()
 void MainWindow::createStatusBar()
 {
     m_licenseIndicator = new QLabel(this);
-    m_licenseIndicator->setToolTip(tr("License status will be connected in version 0.1.5."));
+    m_licenseIndicator->setToolTip(tr("Checks the configured license server. The server controls license duration and device limits."));
 
     m_updateIndicator = new QLabel(this);
     m_updateIndicator->setToolTip(tr("Checks the active CDN manifest. This version does not download or install updates."));
@@ -148,7 +202,13 @@ void MainWindow::rebuildDashboard()
         previousWorkspace->deleteLater();
     }
 
-    setCentralWidget(new TemplateDashboard(m_config, m_updateResult, m_configurationWarnings, this));
+    setCentralWidget(new TemplateDashboard(
+        m_config,
+        m_updateResult,
+        m_licenseResult,
+        m_configurationWarnings,
+        this
+    ));
 }
 
 void MainWindow::applyConfiguration(const AppConfig &config)
@@ -157,6 +217,7 @@ void MainWindow::applyConfiguration(const AppConfig &config)
     AppLogger::configure(m_config);
     ThemeManager::apply(m_config);
     m_updateManager->setConfig(m_config);
+    m_licenseManager->setConfig(m_config);
 
     setWindowTitle(m_config.appName);
     statusBar()->setVisible(m_config.showStatusBar);
@@ -169,7 +230,7 @@ void MainWindow::refreshStatusBar()
     statusBar()->showMessage(
         m_configurationWarnings.isEmpty() ? tr("Ready") : tr("Ready with configuration warnings")
     );
-    m_licenseIndicator->setText(tr("License: Not configured"));
+    m_licenseIndicator->setText(licenseIndicatorText(m_licenseResult));
     m_updateIndicator->setText(updateIndicatorText(m_updateResult, m_config));
     m_versionIndicator->setText(tr("v%1").arg(m_config.version));
 }
@@ -223,15 +284,49 @@ void MainWindow::showUpdateResultMessage(const UpdateCheckResult &result)
     }
 }
 
-void MainWindow::showLicensePlaceholder()
+void MainWindow::checkLicenseStatus()
 {
-    AppLogger::info(QStringLiteral("app"), QStringLiteral("License placeholder opened."));
-    QMessageBox::information(
-        this,
-        tr("License Status"),
-        tr("The configured license API is:\n%1\n\nLicenseManager integration is planned for version 0.1.5.")
-            .arg(m_config.licenseApiBaseUrl)
-    );
+    if (m_licenseManager->isChecking()) {
+        return;
+    }
+    m_manualLicenseCheck = true;
+    m_licenseManager->checkNow();
+}
+
+void MainWindow::showLicenseResultMessage(const LicenseCheckResult &result)
+{
+    const QString title = tr("License Status");
+    QString text = tr("Status: %1\n\n%2")
+        .arg(LicenseManager::statusText(result.status), result.message);
+
+    if (!result.entitlement.licenseId.isEmpty()) {
+        text += tr("\n\nSerial: %1\nPlan: %2\nDuration: %3 days\nDevices: %4 / %5")
+            .arg(
+                LicenseManager::redactedSerial(result.entitlement.serial),
+                result.entitlement.planName,
+                QString::number(result.entitlement.durationDays),
+                QString::number(result.entitlement.activeDeviceCount),
+                QString::number(result.entitlement.deviceLimit)
+            );
+    }
+    if (result.entitlement.expiresAtUtc.isValid()) {
+        text += tr("\nExpires (server): %1")
+            .arg(result.entitlement.expiresAtUtc.toUTC().toString(Qt::ISODate));
+    }
+    if (result.lastVerifiedAtUtc.isValid()) {
+        text += tr("\nLast verified (server): %1")
+            .arg(result.lastVerifiedAtUtc.toUTC().toString(Qt::ISODate));
+    }
+
+    if (result.status == LicenseStatus::Expired
+        || result.status == LicenseStatus::Revoked
+        || result.status == LicenseStatus::InvalidResponse
+        || result.status == LicenseStatus::NetworkError
+        || result.status == LicenseStatus::VerificationRequired) {
+        QMessageBox::warning(this, title, text);
+        return;
+    }
+    QMessageBox::information(this, title, text);
 }
 
 void MainWindow::showAboutDialog()

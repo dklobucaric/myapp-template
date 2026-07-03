@@ -4,7 +4,7 @@
   "appId": "hr.ddlab.myapp-template",
   "productId": "hr.ddlab.myapp-template",
   "vendor": "DD-Lab",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "environment": "development",
   "defaults": {
     "theme": "system",
@@ -14,7 +14,8 @@
     "showStatusBar": true,
     "updateCheckIntervalMinutes": 60,
     "licenseCheckIntervalMinutes": 60,
-    "loggingLevel": "debug"
+    "loggingLevel": "debug",
+    "automaticLicenseChecks": true
   },
   "services": {
     "cdnBaseUrl": "http://localhost:8088/products/myapp-template",

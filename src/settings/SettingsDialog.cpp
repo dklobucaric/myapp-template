@@ -400,14 +400,21 @@ QWidget *SettingsDialog::createLicensePage()
     m_licensePortalUrlEdit->setClearButtonEnabled(true);
     m_licenseApiUrlEdit = new QLineEdit(page);
     m_licenseApiUrlEdit->setClearButtonEnabled(true);
+    m_automaticLicenseChecksCheck = new QCheckBox(tr("Check license status automatically"), page);
+    m_licenseIntervalSpin = new QSpinBox(page);
+    m_licenseIntervalSpin->setRange(5, 24 * 60);
+    m_licenseIntervalSpin->setSuffix(tr(" minutes"));
 
     form->addRow(tr("License Portal URL:"), m_licensePortalUrlEdit);
     form->addRow(tr("License API URL:"), m_licenseApiUrlEdit);
+    form->addRow(QString(), m_automaticLicenseChecksCheck);
+    form->addRow(tr("Fallback check interval:"), m_licenseIntervalSpin);
 
     layout->addLayout(form);
     layout->addWidget(createHint(
-        tr("URLs are persisted as local overrides for development and testing. License server "
-           "connection checks arrive with LicenseManager."),
+        tr("The license server remains authoritative for status, expiry, device limits and "
+           "renewal duration. The local interval is used only when a valid server response "
+           "does not provide its next online check time."),
         page
     ));
     layout->addStretch();
@@ -416,6 +423,12 @@ QWidget *SettingsDialog::createLicensePage()
         previewCurrentControls();
     });
     connect(m_licenseApiUrlEdit, &QLineEdit::textEdited, this, [this] {
+        previewCurrentControls();
+    });
+    connect(m_automaticLicenseChecksCheck, &QCheckBox::toggled, this, [this] {
+        previewCurrentControls();
+    });
+    connect(m_licenseIntervalSpin, qOverload<int>(&QSpinBox::valueChanged), this, [this] {
         previewCurrentControls();
     });
 
@@ -542,6 +555,8 @@ void SettingsDialog::loadControlsFromConfig(const AppConfig &config)
 
     m_licensePortalUrlEdit->setText(config.licensePortalUrl);
     m_licenseApiUrlEdit->setText(config.licenseApiBaseUrl);
+    m_automaticLicenseChecksCheck->setChecked(config.automaticLicenseChecks);
+    m_licenseIntervalSpin->setValue(config.licenseCheckIntervalMinutes);
 
     m_loggingEnabledCheck->setChecked(config.loggingEnabled);
     setComboData(m_loggingLevelCombo, config.loggingLevel);
@@ -659,6 +674,20 @@ void SettingsDialog::rebuildUserOverridesFromControls()
         QStringLiteral("licenseApiBaseUrl"),
         m_licenseApiUrlEdit->text().trimmed()
     );
+    setOrRemoveOverride(
+        m_userOverrides,
+        m_appliedConfig.baselineConfig,
+        QStringLiteral("licensing"),
+        QStringLiteral("automaticChecks"),
+        m_automaticLicenseChecksCheck->isChecked()
+    );
+    setOrRemoveOverride(
+        m_userOverrides,
+        m_appliedConfig.baselineConfig,
+        QStringLiteral("licensing"),
+        QStringLiteral("checkIntervalMinutes"),
+        m_licenseIntervalSpin->value()
+    );
 
     setOrRemoveOverride(
         m_userOverrides,
@@ -692,6 +721,7 @@ void SettingsDialog::resetCurrentPage()
     case 4:
         removeValue(m_userOverrides, QStringLiteral("services"), QStringLiteral("licensePortalUrl"));
         removeValue(m_userOverrides, QStringLiteral("services"), QStringLiteral("licenseApiBaseUrl"));
+        removeSection(m_userOverrides, QStringLiteral("licensing"));
         break;
     case 5:
         removeSection(m_userOverrides, QStringLiteral("diagnostics"));

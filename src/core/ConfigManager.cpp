@@ -186,6 +186,11 @@ ConfigLoadResult ConfigManager::load(
         QStringLiteral("updateCheckIntervalMinutes"),
         60
     );
+    config.automaticLicenseChecks = boolValue(
+        appDefaults,
+        QStringLiteral("automaticLicenseChecks"),
+        true
+    );
     config.licenseCheckIntervalMinutes = intValue(
         appDefaults,
         QStringLiteral("licenseCheckIntervalMinutes"),
@@ -222,6 +227,7 @@ QJsonObject ConfigManager::emptyUserOverrides()
         {QStringLiteral("appearance"), QJsonObject{}},
         {QStringLiteral("layout"), QJsonObject{}},
         {QStringLiteral("updates"), QJsonObject{}},
+        {QStringLiteral("licensing"), QJsonObject{}},
         {QStringLiteral("services"), QJsonObject{}},
         {QStringLiteral("diagnostics"), QJsonObject{}}
     };
@@ -349,6 +355,13 @@ QJsonObject ConfigManager::appProfileDefaultsAsConfig(
         }
     );
     config.insert(
+        QStringLiteral("licensing"),
+        QJsonObject{
+            {QStringLiteral("automaticChecks"), boolValue(defaults, QStringLiteral("automaticLicenseChecks"), true)},
+            {QStringLiteral("checkIntervalMinutes"), intValue(defaults, QStringLiteral("licenseCheckIntervalMinutes"), 60)}
+        }
+    );
+    config.insert(
         QStringLiteral("diagnostics"),
         QJsonObject{
             {QStringLiteral("loggingLevel"), stringValue(defaults, QStringLiteral("loggingLevel"), QStringLiteral("info"))}
@@ -371,6 +384,7 @@ void ConfigManager::populateRuntimeSettings(
     const QJsonObject appearance = objectValue(effectiveConfig, QStringLiteral("appearance"));
     const QJsonObject layout = objectValue(effectiveConfig, QStringLiteral("layout"));
     const QJsonObject updates = objectValue(effectiveConfig, QStringLiteral("updates"));
+    const QJsonObject licensing = objectValue(effectiveConfig, QStringLiteral("licensing"));
     const QJsonObject services = objectValue(effectiveConfig, QStringLiteral("services"));
     const QJsonObject diagnostics = objectValue(effectiveConfig, QStringLiteral("diagnostics"));
 
@@ -408,6 +422,17 @@ void ConfigManager::populateRuntimeSettings(
         updates,
         QStringLiteral("autoDownload"),
         config.autoDownloadUpdates
+    );
+
+    config.automaticLicenseChecks = boolValue(
+        licensing,
+        QStringLiteral("automaticChecks"),
+        config.automaticLicenseChecks
+    );
+    config.licenseCheckIntervalMinutes = intValue(
+        licensing,
+        QStringLiteral("checkIntervalMinutes"),
+        config.licenseCheckIntervalMinutes
     );
 
     config.cdnBaseUrl = stringValue(services, QStringLiteral("cdnBaseUrl"), config.cdnBaseUrl);

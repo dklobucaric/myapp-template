@@ -54,3 +54,11 @@ CTest.
 18. On **Settings → Diagnostics**, change the log level from `error` to `info`, click Apply,
     and confirm the selection remains `info` after reopening Settings and restarting the app.
 17. Run `./scripts/test.sh debug` and confirm all tests pass.
+
+## Manual smoke test for v0.1.5
+
+1. Start `./scripts/run-dev-services.sh`.
+2. Start the app and wait for the License indicator to become **Active**.
+3. Use **Help → Check License Status** and verify the dialog shows a redacted serial, 365-day duration and `1 / 3` devices.
+4. Stop the mock services and repeat the manual check. Verify **Offline grace** is shown without a crash or lockout.
+5. Inspect `license-state.json`; it must not contain the full serial or a URL query secret.

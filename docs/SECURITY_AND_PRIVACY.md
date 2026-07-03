@@ -12,3 +12,11 @@ application. It contains a runtime summary, a deliberately limited safe config
 summary and no more than the latest 200 redacted log lines. It does not include
 `config.json`, license files, private keys, passwords, tokens, serials or full
 home-directory paths. Review every package before sharing it.
+
+
+## License status privacy
+
+`license-state.json` stores a redacted serial suffix, server status and safe
+entitlement metadata only. It does not store a raw serial, activation token,
+password or API query secret. License status logs are passed through
+`AppLogger` redaction before they reach disk.

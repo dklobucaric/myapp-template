@@ -32,6 +32,7 @@ struct AppConfig
     bool automaticUpdateChecks = true;
     int updateCheckIntervalMinutes = 60;
     bool autoDownloadUpdates = false;
+    bool automaticLicenseChecks = true;
     int licenseCheckIntervalMinutes = 60;
 
     QString cdnBaseUrl;

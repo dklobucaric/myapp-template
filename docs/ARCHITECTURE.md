@@ -21,6 +21,7 @@ MainWindow
 ├── Functional Settings Dialog
 ├── DiagnosticsManager
 ├── UpdateManager
+├── LicenseManager
 └── Status Bar
 ```
 
@@ -73,3 +74,12 @@ identity and compatibility, compares semantic versions and persists only a redac
 state in `update-state.json`. `UpdateManager` owns recurring automatic scheduling from persisted
 elapsed time and `MainWindow` exposes manual checks through **Help → Check for Updates**. v0.1.4 has no download or
 installation path. See [`UPDATES.md`](UPDATES.md).
+
+
+## License status checks
+
+`LicenseManager` requests the configured license-status endpoint asynchronously.
+It validates product identity, server status, plan duration, device counts and
+server timestamps. The manager persists a redacted `license-state.json`, owns
+automatic retry scheduling and presents cached offline grace without making a
+local-clock-only lock decision. See [`LICENSE_SERVER.md`](LICENSE_SERVER.md).

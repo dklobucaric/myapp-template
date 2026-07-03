@@ -80,6 +80,13 @@ user override removed
 
 See [`SETTINGS.md`](SETTINGS.md) for each page and its behavior.
 
+## License check preferences
+
+The `licensing` section contains `automaticChecks` and
+`checkIntervalMinutes`. These are local scheduling preferences. A valid server
+response can provide `nextOnlineCheckAfter`, which takes precedence for the
+next background verification.
+
 ## Safe writes
 
 `ConfigManager` writes local JSON through `QSaveFile`. The file is written to a

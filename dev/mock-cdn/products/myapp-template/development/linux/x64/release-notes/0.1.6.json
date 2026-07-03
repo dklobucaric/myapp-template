@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.6",
+  "title": "Mock license foundation release for MyAppTemplate",
+  "items": [
+    "Added server-authoritative license status checks.",
+    "Added offline grace and redacted local license state.",
+    "Added license duration and device-limit display."
+  ]
+}
