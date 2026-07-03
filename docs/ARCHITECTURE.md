@@ -10,13 +10,15 @@ Qt resources
 ├── default config.json
 └── environment profile
         ↓
-User AppData config.json
+User AppData config.json overrides
         ↓
 AppConfig runtime model
         ↓
 MainWindow
+├── ThemeManager
 ├── Template Dashboard
-├── Settings Dialog
+├── Functional Settings Dialog
+├── Toolbar
 └── Status Bar
 ```
 
@@ -26,8 +28,8 @@ packaging on Linux, Windows and macOS.
 
 ## Settings Dialog
 
-The v0.1.1 Settings Dialog is a read-only shell. It establishes the reusable
-navigation structure before editable controls are added in later milestones.
+The v0.1.2 Settings Dialog is functional. It writes only user overrides and
+supports Apply, Cancel, Reset Current Page and Reset All Settings.
 
 Categories:
 
@@ -39,7 +41,14 @@ Categories:
 - Diagnostics
 - Advanced
 
+`SettingsDialog` previews live appearance and visibility changes through a
+callback to `MainWindow`. `ThemeManager` owns platform palette capture and
+applies System, Light and Dark variants without making the system palette
+unrecoverable.
 
 ## Built-in JSON Resources
 
-Default JSON files and environment profiles are embedded into each executable through `resources/myapp_template.qrc`. CMake `CMAKE_AUTORCC` is explicitly enabled before targets are created; `qt_standard_project_setup()` enables AUTOMOC/AUTOUIC but does not enable AUTORCC.
+Default JSON files and environment profiles are embedded into each executable
+through `resources/myapp_template.qrc`. CMake `CMAKE_AUTORCC` is explicitly
+enabled before targets are created; `qt_standard_project_setup()` enables
+AUTOMOC/AUTOUIC but does not enable AUTORCC.

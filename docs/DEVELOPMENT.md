@@ -18,7 +18,7 @@ release tag.
 
 ```text
 src/app/        Application bootstrap and command-line handling
-src/core/       Reusable non-UI services such as ConfigManager
+src/core/       Reusable non-UI services such as ConfigManager and ThemeManager
 src/ui/         MainWindow and reusable application-shell UI
 src/settings/   Settings Dialog and Settings Pages
 src/workspace/  Product-specific Main Content Area
@@ -38,6 +38,9 @@ Do not edit compiled resource paths in C++ for normal endpoint changes. Update
 `app-profile.json`, `profiles/*.json`, or a local runtime `config.json`
 override instead.
 
+Settings writes only local overrides, not a copy of the current environment
+profile. Use Settings reset actions when testing profile fallback behavior.
+
 ## Validation before commit
 
 ```bash
@@ -49,4 +52,8 @@ git status
 
 ## Qt Resources
 
-Built-in JSON files are compiled into each target through `resources/myapp_template.qrc`. CMake `CMAKE_AUTORCC` compiles the resource collection into both the application and unit-test binaries, so `ConfigManager` can load `:/defaults/...` and `:/profiles/...` paths without manual resource initialization.
+Built-in JSON files are compiled into each target through
+`resources/myapp_template.qrc`. CMake `CMAKE_AUTORCC` compiles the resource
+collection into both the application and unit-test binaries, so `ConfigManager`
+can load `:/defaults/...` and `:/profiles/...` paths without manual resource
+initialization.

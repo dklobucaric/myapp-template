@@ -9,8 +9,9 @@ products:
 - Menu Bar
 - Main Content Area
 - Status Bar
-- Settings system
+- Functional Settings system with Apply, Cancel, Reset Page and Reset All
 - Layered JSON configuration with development, staging and production profiles
+- Theme, accent color, font scale and display preferences
 - License import and validation foundation
 - CDN/update manifest foundation
 - Diagnostics and structured logging foundation
@@ -19,7 +20,7 @@ products:
 
 ## Development status
 
-Current version: `0.1.1`
+Current version: `0.1.2`
 
 Primary development platform: Linux.
 
@@ -40,6 +41,15 @@ Run automated tests:
 ```
 
 More detailed instructions are available under [`docs/`](docs/).
+
+## Functional Settings
+
+Open **Settings → Settings…** to change application preferences. Settings are
+saved as a small local override layer, so switching environment profiles still
+uses the correct development, staging or production defaults unless the user
+explicitly overrides a value.
+
+See [`docs/SETTINGS.md`](docs/SETTINGS.md) for the complete behavior.
 
 ## Where to start a new application
 

@@ -33,7 +33,9 @@ field.
 
 ## Runtime user config location
 
-The application creates the local file on first start with empty override sections. Add only the values that should override the built-in and environment defaults.
+The application creates the local file on first start with empty override
+sections. Add only the values that should override the built-in and
+environment defaults.
 
 ```text
 Linux:
@@ -46,7 +48,7 @@ macOS:
 ~/Library/Application Support/DD-Lab/MyAppTemplate/config.json
 ```
 
-The exact location is also visible in Settings → Advanced.
+The exact location is visible in Settings → General and Settings → Advanced.
 
 ## Environment selection
 
@@ -62,6 +64,22 @@ Use a different profile while testing:
 
 Supported profile names are `development`, `staging` and `production`.
 
+## Functional Settings
+
+The Settings Dialog persists values as local overrides. It compares every
+value against the active profile baseline. When a value equals the baseline,
+that override is removed from local `config.json` rather than redundantly
+stored.
+
+This gives reset behavior the expected result:
+
+```text
+user override removed
+→ active environment profile becomes visible again
+```
+
+See [`SETTINGS.md`](SETTINGS.md) for each page and its behavior.
+
 ## Safe writes
 
 `ConfigManager` writes local JSON through `QSaveFile`. The file is written to a
@@ -72,10 +90,10 @@ Malformed local JSON is never overwritten automatically. The app logs a
 configuration warning, ignores that malformed override for the current run and
 continues with the safe built-in and environment defaults.
 
-## Built-in resource initialization
+## Built-in resources
 
 `app-profile.json`, the default configuration and environment profiles are
-compiled into the application through the Qt resource system. `ConfigManager`
-initializes that resource collection before it loads any `:/defaults/...` or
-`:/profiles/...` path, so configuration loading is independent of the current
-working directory.
+compiled into the application through the Qt resource system. `CMAKE_AUTORCC`
+compiles the resource collection into both the application and unit-test
+binaries, so `ConfigManager` can load `:/defaults/...` and `:/profiles/...`
+without manual resource initialization.

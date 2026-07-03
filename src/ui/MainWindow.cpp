@@ -7,7 +7,9 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QToolBar>
 
+#include "core/ThemeManager.h"
 #include "settings/SettingsDialog.h"
 #include "workspace/TemplateDashboard.h"
 
@@ -20,19 +22,18 @@ MainWindow::MainWindow(
     , m_config(config)
     , m_configurationWarnings(configurationWarnings)
 {
+    ThemeManager::apply(m_config);
+
     setWindowTitle(m_config.appName);
     resize(m_config.windowWidth, m_config.windowHeight);
 
-    setCentralWidget(new TemplateDashboard(
-        m_config,
-        m_configurationWarnings,
-        this
-    ));
-
     createMenuBar();
+    createToolBar();
     createStatusBar();
+    rebuildDashboard();
 
     statusBar()->setVisible(m_config.showStatusBar);
+    m_mainToolBar->setVisible(m_config.showToolbar);
 }
 
 void MainWindow::createMenuBar()
@@ -92,7 +93,73 @@ void MainWindow::createMenuBar()
     });
 }
 
+void MainWindow::createToolBar()
+{
+    m_mainToolBar = addToolBar(tr("Main Toolbar"));
+    m_mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
+    m_mainToolBar->setMovable(true);
+
+    auto *settingsAction = m_mainToolBar->addAction(tr("Settings"));
+    connect(settingsAction, &QAction::triggered, this, [this] {
+        showSettingsDialog();
+    });
+
+    auto *updatesAction = m_mainToolBar->addAction(tr("Updates"));
+    connect(updatesAction, &QAction::triggered, this, [this] {
+        showUpdatePlaceholder();
+    });
+}
+
 void MainWindow::createStatusBar()
+{
+    m_licenseIndicator = new QLabel(this);
+    m_licenseIndicator->setToolTip(
+        tr("License status will be connected in version 0.1.5.")
+    );
+
+    m_updateIndicator = new QLabel(this);
+    m_updateIndicator->setToolTip(
+        tr("UpdateManager integration is planned for version 0.1.4.")
+    );
+
+    m_versionIndicator = new QLabel(this);
+
+    statusBar()->addPermanentWidget(m_licenseIndicator);
+    statusBar()->addPermanentWidget(m_updateIndicator);
+    statusBar()->addPermanentWidget(m_versionIndicator);
+    refreshStatusBar();
+}
+
+void MainWindow::rebuildDashboard()
+{
+    QWidget *previousWorkspace = takeCentralWidget();
+    if (previousWorkspace != nullptr) {
+        previousWorkspace->deleteLater();
+    }
+
+    setCentralWidget(new TemplateDashboard(
+        m_config,
+        m_configurationWarnings,
+        this
+    ));
+}
+
+void MainWindow::applyConfiguration(const AppConfig &config)
+{
+    m_config = config;
+    ThemeManager::apply(m_config);
+
+    setWindowTitle(m_config.appName);
+    statusBar()->setVisible(m_config.showStatusBar);
+    if (m_mainToolBar != nullptr) {
+        m_mainToolBar->setVisible(m_config.showToolbar);
+    }
+
+    refreshStatusBar();
+    rebuildDashboard();
+}
+
+void MainWindow::refreshStatusBar()
 {
     statusBar()->showMessage(
         m_configurationWarnings.isEmpty()
@@ -100,32 +167,20 @@ void MainWindow::createStatusBar()
             : tr("Ready with configuration warnings")
     );
 
-    m_licenseIndicator = new QLabel(tr("License: Not configured"), this);
-    m_licenseIndicator->setToolTip(
-        tr("License status will be connected in version 0.1.6.")
-    );
-
-    m_updateIndicator = new QLabel(
-        tr("Updates: %1").arg(m_config.updateChannel),
-        this
-    );
-    m_updateIndicator->setToolTip(
-        tr("Mock CDN integration will be connected in version 0.1.5.")
-    );
-
-    m_versionIndicator = new QLabel(
-        tr("v%1").arg(m_config.version),
-        this
-    );
-
-    statusBar()->addPermanentWidget(m_licenseIndicator);
-    statusBar()->addPermanentWidget(m_updateIndicator);
-    statusBar()->addPermanentWidget(m_versionIndicator);
+    m_licenseIndicator->setText(tr("License: Not configured"));
+    m_updateIndicator->setText(tr("Updates: %1").arg(m_config.updateChannel));
+    m_versionIndicator->setText(tr("v%1").arg(m_config.version));
 }
 
 void MainWindow::showSettingsDialog()
 {
-    SettingsDialog dialog(m_config, this);
+    SettingsDialog dialog(
+        m_config,
+        [this](const AppConfig &previewConfig) {
+            applyConfiguration(previewConfig);
+        },
+        this
+    );
     dialog.exec();
 }
 
@@ -134,8 +189,8 @@ void MainWindow::showUpdatePlaceholder()
     QMessageBox::information(
         this,
         tr("Updates"),
-        tr("The configured development CDN is:\n%1\n\n"
-           "UpdateManager integration is planned for version 0.1.5.")
+        tr("The configured CDN is:\n%1\n\n"
+           "UpdateManager integration is planned for version 0.1.4.")
             .arg(m_config.cdnBaseUrl)
     );
 }
@@ -146,7 +201,7 @@ void MainWindow::showLicensePlaceholder()
         this,
         tr("License Status"),
         tr("The configured license API is:\n%1\n\n"
-           "LicenseManager integration is planned for version 0.1.6.")
+           "LicenseManager integration is planned for version 0.1.5.")
             .arg(m_config.licenseApiBaseUrl)
     );
 }

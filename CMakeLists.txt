@@ -40,6 +40,8 @@ qt_add_executable(myapp-template
   src/settings/SettingsDialog.h
   src/workspace/TemplateDashboard.cpp
   src/workspace/TemplateDashboard.h
+  src/core/ThemeManager.cpp
+  src/core/ThemeManager.h
   ${MYAPP_TEMPLATE_CORE_SOURCES}
   ${MYAPP_TEMPLATE_RESOURCES}
 )

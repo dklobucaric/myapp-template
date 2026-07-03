@@ -15,6 +15,8 @@ private slots:
     void environmentProfileOverridesDefaultEndpoints();
     void userConfigOverridesEnvironmentProfile();
     void malformedUserConfigFallsBackSafely();
+    void clearingUserOverridesRestoresEnvironmentValues();
+    void previewConfigUsesBaselineWhenOverridesChange();
 };
 
 void ConfigManagerTest::builtInResourcesAreAvailable()
@@ -152,6 +154,96 @@ void ConfigManagerTest::malformedUserConfigFallsBackSafely()
     QCOMPARE(
         result.config.cdnBaseUrl,
         QStringLiteral("http://localhost:8088/products/myapp-template")
+    );
+}
+
+
+void ConfigManagerTest::clearingUserOverridesRestoresEnvironmentValues()
+{
+    QTemporaryDir temporaryDirectory;
+    QVERIFY(temporaryDirectory.isValid());
+
+    const QJsonObject overrides{
+        {QStringLiteral("schemaVersion"), 1},
+        {QStringLiteral("services"), QJsonObject{
+            {QStringLiteral("cdnBaseUrl"), QStringLiteral("https://override.example.invalid/cdn")}
+        }}
+    };
+
+    QString errorMessage;
+    QVERIFY(ConfigManager::saveUserOverrides(
+        overrides,
+        temporaryDirectory.path(),
+        &errorMessage
+    ));
+    QVERIFY2(errorMessage.isEmpty(), qPrintable(errorMessage));
+
+    const ConfigLoadResult overridden = ConfigManager::load(
+        QStringLiteral("staging"),
+        temporaryDirectory.path()
+    );
+    QCOMPARE(
+        overridden.config.cdnBaseUrl,
+        QStringLiteral("https://override.example.invalid/cdn")
+    );
+
+    QVERIFY(ConfigManager::saveUserOverrides(
+        ConfigManager::emptyUserOverrides(),
+        temporaryDirectory.path(),
+        &errorMessage
+    ));
+    QVERIFY2(errorMessage.isEmpty(), qPrintable(errorMessage));
+
+    const ConfigLoadResult restored = ConfigManager::load(
+        QStringLiteral("staging"),
+        temporaryDirectory.path()
+    );
+    QCOMPARE(
+        restored.config.cdnBaseUrl,
+        QStringLiteral("https://staging-cdn.dd-lab.hr/products/myapp-template")
+    );
+    QCOMPARE(restored.config.updateChannel, QStringLiteral("beta"));
+}
+
+void ConfigManagerTest::previewConfigUsesBaselineWhenOverridesChange()
+{
+    QTemporaryDir temporaryDirectory;
+    QVERIFY(temporaryDirectory.isValid());
+
+    const ConfigLoadResult baseline = ConfigManager::load(
+        QStringLiteral("production"),
+        temporaryDirectory.path()
+    );
+    QVERIFY2(baseline.isUsable(), qPrintable(baseline.warnings.join('\n')));
+
+    QJsonObject overrides = ConfigManager::emptyUserOverrides();
+    overrides.insert(QStringLiteral("appearance"), QJsonObject{
+        {QStringLiteral("theme"), QStringLiteral("dark")}
+    });
+    overrides.insert(QStringLiteral("layout"), QJsonObject{
+        {QStringLiteral("showStatusBar"), false}
+    });
+
+    const AppConfig preview = ConfigManager::configWithUserOverrides(
+        baseline.config,
+        overrides
+    );
+    QCOMPARE(preview.theme, QStringLiteral("dark"));
+    QVERIFY(!preview.showStatusBar);
+    QCOMPARE(
+        preview.cdnBaseUrl,
+        QStringLiteral("https://cdn.dd-lab.hr/products/myapp-template")
+    );
+
+    const AppConfig resetPreview = ConfigManager::configWithUserOverrides(
+        baseline.config,
+        ConfigManager::emptyUserOverrides()
+    );
+    QCOMPARE(resetPreview.theme, QStringLiteral("system"));
+    QVERIFY(resetPreview.showStatusBar);
+    QCOMPARE(
+        resetPreview.cdnBaseUrl,
+        QStringLiteral("https://cdn.dd-lab.hr/products/myapp-template")
     );
 }
 

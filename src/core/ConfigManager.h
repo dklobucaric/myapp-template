@@ -45,6 +45,17 @@ struct AppConfig
     QString userConfigPath;
     bool userConfigCreated = false;
 
+    /**
+     * Effective configuration before local user overrides are applied.
+     * Settings uses this to keep config.json as a small override layer rather
+     * than copying environment-specific values into every user config file.
+     */
+    QJsonObject baselineConfig;
+
+    /** The raw local config.json override object. */
+    QJsonObject userOverrides;
+
+    /** Fully merged configuration currently in effect. */
     QJsonObject effectiveConfig;
 };
 
@@ -57,7 +68,7 @@ struct ConfigLoadResult
 };
 
 /**
- * Loads the reusable configuration layers for MyAppTemplate.
+ * Loads and persists the reusable configuration layers for MyAppTemplate.
  *
  * Load order, from lowest to highest priority:
  * 1. Built-in default config
@@ -75,6 +86,19 @@ public:
 
     [[nodiscard]] static QString userConfigPath(
         const QString &configDirectoryOverride = {}
+    );
+
+    /** Returns the minimal valid user config object with no active overrides. */
+    [[nodiscard]] static QJsonObject emptyUserOverrides();
+
+    /**
+     * Applies raw user overrides to an already-loaded baseline configuration.
+     * This is used by Settings for safe live previews before changes are
+     * persisted to disk.
+     */
+    [[nodiscard]] static AppConfig configWithUserOverrides(
+        const AppConfig &baseConfig,
+        const QJsonObject &userOverrides
     );
 
     static bool saveUserOverrides(
@@ -96,6 +120,11 @@ private:
 
     static QJsonObject appProfileDefaultsAsConfig(
         const QJsonObject &appProfile
+    );
+
+    static void populateRuntimeSettings(
+        AppConfig &config,
+        const QJsonObject &effectiveConfig
     );
 
     static bool writeJsonAtomically(

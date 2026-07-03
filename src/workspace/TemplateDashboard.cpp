@@ -69,7 +69,7 @@ TemplateDashboard::TemplateDashboard(
             tr("Status: Not configured"),
             tr("License portal: %1").arg(config.licensePortalUrl),
             tr("License API: %1").arg(config.licenseApiBaseUrl),
-            tr("LicenseManager integration: planned for version 0.1.6")
+            tr("LicenseManager integration: planned for version 0.1.5")
         }
     ));
 
@@ -80,7 +80,7 @@ TemplateDashboard::TemplateDashboard(
             tr("CDN: %1").arg(config.cdnBaseUrl),
             tr("Automatic checks: every %1 minutes")
                 .arg(config.updateCheckIntervalMinutes),
-            tr("UpdateManager integration: planned for version 0.1.5")
+            tr("UpdateManager integration: planned for version 0.1.4")
         }
     ));
 
@@ -89,7 +89,7 @@ TemplateDashboard::TemplateDashboard(
         {
             tr("Logging: %1 (%2)")
                 .arg(config.loggingEnabled ? tr("Enabled") : tr("Disabled"), config.loggingLevel),
-            tr("Diagnostics bundle support: planned for version 0.1.4")
+            tr("Diagnostics bundle support: planned for version 0.1.3")
         }
     ));
 
