@@ -3,12 +3,18 @@
 #include <QStringList>
 #include <QWidget>
 
+#include "core/ConfigManager.h"
+
 class QGroupBox;
 
 class TemplateDashboard final : public QWidget
 {
 public:
-    explicit TemplateDashboard(QWidget *parent = nullptr);
+    explicit TemplateDashboard(
+        const AppConfig &config,
+        const QStringList &warnings = {},
+        QWidget *parent = nullptr
+    );
 
 private:
     QGroupBox *createSection(

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.2",
+  "title": "Mock update for MyAppTemplate",
+  "items": [
+    "Added mock CDN update manifest.",
+    "Added initial license-server contract.",
+    "Added development fixtures for testing."
+  ]
+}

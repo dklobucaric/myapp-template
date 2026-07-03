@@ -15,16 +15,33 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+# qt_standard_project_setup() enables AUTOMOC and AUTOUIC, but not AUTORCC.
+# Our built-in JSON profiles are embedded through the .qrc file below.
+set(CMAKE_AUTORCC ON)
+
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
 qt_standard_project_setup()
+
+set(MYAPP_TEMPLATE_RESOURCES
+  resources/myapp_template.qrc
+)
+
+set(MYAPP_TEMPLATE_CORE_SOURCES
+  src/core/ConfigManager.cpp
+  src/core/ConfigManager.h
+)
 
 qt_add_executable(myapp-template
   src/app/main.cpp
   src/ui/MainWindow.cpp
   src/ui/MainWindow.h
+  src/settings/SettingsDialog.cpp
+  src/settings/SettingsDialog.h
   src/workspace/TemplateDashboard.cpp
   src/workspace/TemplateDashboard.h
+  ${MYAPP_TEMPLATE_CORE_SOURCES}
+  ${MYAPP_TEMPLATE_RESOURCES}
 )
 
 target_include_directories(myapp-template
@@ -34,6 +51,7 @@ target_include_directories(myapp-template
 
 target_link_libraries(myapp-template
   PRIVATE
+    Qt6::Core
     Qt6::Widgets
 )
 
@@ -47,3 +65,27 @@ set_target_properties(myapp-template PROPERTIES
   MACOSX_BUNDLE TRUE
 )
 
+include(CTest)
+
+if(BUILD_TESTING)
+  find_package(Qt6 REQUIRED COMPONENTS Test)
+
+  qt_add_executable(config-manager-tests
+    tests/unit/ConfigManagerTest.cpp
+    ${MYAPP_TEMPLATE_CORE_SOURCES}
+    ${MYAPP_TEMPLATE_RESOURCES}
+  )
+
+  target_include_directories(config-manager-tests
+    PRIVATE
+      "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  )
+
+  target_link_libraries(config-manager-tests
+    PRIVATE
+      Qt6::Core
+      Qt6::Test
+  )
+
+  add_test(NAME ConfigManagerTests COMMAND config-manager-tests)
+endif()

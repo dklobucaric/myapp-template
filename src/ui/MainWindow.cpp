@@ -8,18 +8,31 @@
 #include <QMessageBox>
 #include <QStatusBar>
 
+#include "settings/SettingsDialog.h"
 #include "workspace/TemplateDashboard.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(
+    const AppConfig &config,
+    const QStringList &configurationWarnings,
+    QWidget *parent
+)
     : QMainWindow(parent)
+    , m_config(config)
+    , m_configurationWarnings(configurationWarnings)
 {
-    setWindowTitle(tr("MyAppTemplate"));
-    resize(1200, 800);
+    setWindowTitle(m_config.appName);
+    resize(m_config.windowWidth, m_config.windowHeight);
 
-    setCentralWidget(new TemplateDashboard(this));
+    setCentralWidget(new TemplateDashboard(
+        m_config,
+        m_configurationWarnings,
+        this
+    ));
 
     createMenuBar();
     createStatusBar();
+
+    statusBar()->setVisible(m_config.showStatusBar);
 }
 
 void MainWindow::createMenuBar()
@@ -56,7 +69,7 @@ void MainWindow::createMenuBar()
     auto *settingsAction = settingsMenu->addAction(tr("&Settings..."));
 
     connect(settingsAction, &QAction::triggered, this, [this] {
-        showSettingsPlaceholder();
+        showSettingsDialog();
     });
 
     auto *helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -73,7 +86,7 @@ void MainWindow::createMenuBar()
 
     helpMenu->addSeparator();
 
-    auto *aboutAction = helpMenu->addAction(tr("&About MyAppTemplate"));
+    auto *aboutAction = helpMenu->addAction(tr("&About %1").arg(m_config.appName));
     connect(aboutAction, &QAction::triggered, this, [this] {
         showAboutDialog();
     });
@@ -81,20 +94,27 @@ void MainWindow::createMenuBar()
 
 void MainWindow::createStatusBar()
 {
-    statusBar()->showMessage(tr("Ready"));
+    statusBar()->showMessage(
+        m_configurationWarnings.isEmpty()
+            ? tr("Ready")
+            : tr("Ready with configuration warnings")
+    );
 
     m_licenseIndicator = new QLabel(tr("License: Not configured"), this);
     m_licenseIndicator->setToolTip(
         tr("License status will be connected in version 0.1.6.")
     );
 
-    m_updateIndicator = new QLabel(tr("Updates: Development"), this);
+    m_updateIndicator = new QLabel(
+        tr("Updates: %1").arg(m_config.updateChannel),
+        this
+    );
     m_updateIndicator->setToolTip(
         tr("Mock CDN integration will be connected in version 0.1.5.")
     );
 
     m_versionIndicator = new QLabel(
-        tr("v%1").arg(QStringLiteral(MYAPP_TEMPLATE_VERSION)),
+        tr("v%1").arg(m_config.version),
         this
     );
 
@@ -103,15 +123,10 @@ void MainWindow::createStatusBar()
     statusBar()->addPermanentWidget(m_versionIndicator);
 }
 
-void MainWindow::showSettingsPlaceholder()
+void MainWindow::showSettingsDialog()
 {
-    QMessageBox::information(
-        this,
-        tr("Settings"),
-        tr("The Settings Dialog is planned for version 0.1.1.\n\n"
-           "The default JSON configuration files already exist under "
-           "assets/defaults/.")
-    );
+    SettingsDialog dialog(m_config, this);
+    dialog.exec();
 }
 
 void MainWindow::showUpdatePlaceholder()
@@ -119,8 +134,9 @@ void MainWindow::showUpdatePlaceholder()
     QMessageBox::information(
         this,
         tr("Updates"),
-        tr("The mock CDN is running separately during development.\n\n"
+        tr("The configured development CDN is:\n%1\n\n"
            "UpdateManager integration is planned for version 0.1.5.")
+            .arg(m_config.cdnBaseUrl)
     );
 }
 
@@ -129,8 +145,9 @@ void MainWindow::showLicensePlaceholder()
     QMessageBox::information(
         this,
         tr("License Status"),
-        tr("The license JSON model and mock license-server response are ready.\n\n"
+        tr("The configured license API is:\n%1\n\n"
            "LicenseManager integration is planned for version 0.1.6.")
+            .arg(m_config.licenseApiBaseUrl)
     );
 }
 
@@ -138,13 +155,18 @@ void MainWindow::showAboutDialog()
 {
     QMessageBox::about(
         this,
-        tr("About MyAppTemplate"),
-        tr("<h2>MyAppTemplate</h2>"
-           "<p>Version %1</p>"
+        tr("About %1").arg(m_config.appName),
+        tr("<h2>%1</h2>"
+           "<p>Version %2</p>"
            "<p>Reusable desktop application shell built with "
            "C++20, Qt 6 Widgets and CMake.</p>"
-           "<p><b>Product ID:</b> hr.ddlab.myapp-template</p>"
-           "<p><b>Environment:</b> development</p>")
-            .arg(QStringLiteral(MYAPP_TEMPLATE_VERSION))
+           "<p><b>Product ID:</b> %3</p>"
+           "<p><b>Environment:</b> %4</p>")
+            .arg(
+                m_config.appName,
+                m_config.version,
+                m_config.productId,
+                m_config.environment
+            )
     );
 }
