@@ -1,13 +1,11 @@
 {
   "schemaVersion": 1,
-
   "appearance": {
     "theme": "system",
     "accentColor": "#3B82F6",
     "fontScale": 1.0,
     "density": "comfortable"
   },
-
   "layout": {
     "windowWidth": 1200,
     "windowHeight": 800,
@@ -15,22 +13,23 @@
     "rememberWindowPosition": true,
     "showStatusBar": true
   },
-
   "updates": {
     "channel": "development",
     "automaticChecks": true,
     "checkIntervalMinutes": 60,
     "autoDownload": false
   },
-
   "services": {
     "cdnBaseUrl": "http://localhost:8088/products/myapp-template",
     "licensePortalUrl": "http://localhost:8089",
     "licenseApiBaseUrl": "http://localhost:8089/api/v1"
   },
-
   "diagnostics": {
     "loggingEnabled": true,
     "loggingLevel": "debug"
+  },
+  "licensing": {
+    "automaticChecks": true,
+    "checkIntervalMinutes": 60
   }
 }

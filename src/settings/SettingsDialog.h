@@ -95,6 +95,8 @@ private:
 
     QLineEdit *m_licensePortalUrlEdit = nullptr;
     QLineEdit *m_licenseApiUrlEdit = nullptr;
+    QCheckBox *m_automaticLicenseChecksCheck = nullptr;
+    QSpinBox *m_licenseIntervalSpin = nullptr;
 
     QCheckBox *m_loggingEnabledCheck = nullptr;
     QComboBox *m_loggingLevelCombo = nullptr;

@@ -1,6 +1,6 @@
 # Manual Test Checklist
 
-## v0.1.4 Update foundation, logging and safe diagnostics
+## v0.1.5 License foundation, update foundation, logging and safe diagnostics
 
 - [ ] App starts from any working directory.
 - [ ] Template Dashboard shows dynamic app name, product ID and environment.
@@ -37,3 +37,12 @@
 - [ ] Stop mock services and confirm the next manual check reports a safe network failure.
 - [ ] Set automatic update checks to five minutes and confirm a background check occurs without a manual action.
 - [ ] `update-state.json` has a timestamp and redacted manifest URL/message; it has no token query value.
+
+
+- [ ] Start `./scripts/run-dev-services.sh`; use **Help → Check License Status**.
+- [ ] Mock license reports Active and refreshes Dashboard and Status Bar.
+- [ ] Manual license dialog shows a redacted serial suffix, annual 365-day duration and `1 / 3` devices.
+- [ ] License Server Settings: automatic check preference and fallback interval persist after Apply/restart.
+- [ ] Stop mock services; the next manual license check shows Offline grace when a valid cached response exists.
+- [ ] A stopped server never crashes or locally locks the application.
+- [ ] `license-state.json` contains no full serial or URL query token.

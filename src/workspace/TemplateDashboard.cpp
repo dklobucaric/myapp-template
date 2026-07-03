@@ -24,11 +24,18 @@ QString updateStatusLabel(const UpdateCheckResult &result)
     }
     return QObject::tr("Unknown");
 }
+
+QString licenseStatusLabel(const LicenseCheckResult &result)
+{
+    return LicenseManager::statusText(result.status);
+}
+
 }
 
 TemplateDashboard::TemplateDashboard(
     const AppConfig &config,
     const UpdateCheckResult &updateResult,
+    const LicenseCheckResult &licenseResult,
     const QStringList &warnings,
     QWidget *parent
 )
@@ -70,12 +77,43 @@ TemplateDashboard::TemplateDashboard(
          tr("Window: %1 × %2").arg(config.windowWidth).arg(config.windowHeight)}
     ));
 
-    layout->addWidget(createSection(
-        tr("License"),
-        {tr("Status: Not configured"), tr("License portal: %1").arg(config.licensePortalUrl),
-         tr("License API: %1").arg(config.licenseApiBaseUrl),
-         tr("LicenseManager integration: planned for version 0.1.5")}
-    ));
+    QStringList licenseLines{
+        tr("Status: %1").arg(licenseStatusLabel(licenseResult)),
+        tr("License portal: %1").arg(config.licensePortalUrl),
+        tr("License API: %1").arg(config.licenseApiBaseUrl),
+        tr("Automatic checks: every %1 minutes").arg(config.licenseCheckIntervalMinutes)
+    };
+    if (!licenseResult.entitlement.licenseId.isEmpty()) {
+        licenseLines.append(
+            tr("Serial: %1").arg(LicenseManager::redactedSerial(licenseResult.entitlement.serial))
+        );
+        licenseLines.append(tr("Plan: %1").arg(licenseResult.entitlement.planName));
+        licenseLines.append(
+            tr("Duration: %1 days").arg(licenseResult.entitlement.durationDays)
+        );
+        licenseLines.append(
+            tr("Devices: %1 / %2")
+                .arg(licenseResult.entitlement.activeDeviceCount)
+                .arg(licenseResult.entitlement.deviceLimit)
+        );
+    }
+    if (licenseResult.entitlement.expiresAtUtc.isValid()) {
+        licenseLines.append(
+            tr("Expires (server): %1")
+                .arg(licenseResult.entitlement.expiresAtUtc.toUTC().toString(Qt::ISODate))
+        );
+    }
+    if (licenseResult.lastVerifiedAtUtc.isValid()) {
+        licenseLines.append(
+            tr("Last verified (server): %1")
+                .arg(licenseResult.lastVerifiedAtUtc.toUTC().toString(Qt::ISODate))
+        );
+    }
+    if (!licenseResult.message.isEmpty()) {
+        licenseLines.append(tr("Result: %1").arg(licenseResult.message));
+    }
+    licenseLines.append(tr("The license server controls seats, duration, expiry and revocation."));
+    layout->addWidget(createSection(tr("License"), licenseLines));
 
     QStringList updateLines{
         tr("Channel: %1").arg(config.updateChannel),
@@ -92,7 +130,7 @@ TemplateDashboard::TemplateDashboard(
     if (!updateResult.message.isEmpty()) {
         updateLines.append(tr("Result: %1").arg(updateResult.message));
     }
-    updateLines.append(tr("Manifest check only — no download or installation in version 0.1.4"));
+    updateLines.append(tr("Manifest check only — no download or installation in version 0.1.5"));
     layout->addWidget(createSection(tr("Updates"), updateLines));
 
     layout->addWidget(createSection(

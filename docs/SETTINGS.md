@@ -55,9 +55,13 @@ This page saves preferences only. Connection checks arrive with UpdateManager.
 
 - License Portal URL
 - License API URL
+- Automatic license checks
+- Fallback check interval
 
-This page saves local endpoint overrides only. License validation and server
-connection checks arrive with LicenseManager.
+This page saves local endpoint and scheduling overrides. The server remains
+authoritative for status, duration, expiry and device limits. After a successful
+response, the server-provided next-check timestamp takes precedence over the
+fallback interval.
 
 ### Diagnostics
 

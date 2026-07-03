@@ -12,7 +12,7 @@ products:
 - Functional Settings system with Apply, Cancel, Reset Page and Reset All
 - Layered JSON configuration with development, staging and production profiles
 - Theme, accent color, font scale and display preferences
-- License import and validation foundation
+- Server-authoritative LicenseManager foundation
 - CDN/update manifest foundation
 - Diagnostics and structured logging foundation
 - Test structure
@@ -20,7 +20,7 @@ products:
 
 ## Development status
 
-Current version: `0.1.4`
+Current version: `0.1.5`
 
 Primary development platform: Linux.
 
@@ -56,6 +56,13 @@ See [`docs/SETTINGS.md`](docs/SETTINGS.md) for the complete behavior.
 **Help → Check for Updates** checks the active mock or configured CDN manifest,
 updates the Dashboard and Status Bar, and persists a redacted local check state.
 It does not download or install an artifact yet. See [`docs/UPDATES.md`](docs/UPDATES.md).
+
+## License status
+
+**Help → Check License Status** checks the configured license service and
+shows the server-authoritative entitlement state, plan duration, redacted
+serial suffix, device usage and expiry. The server—not the serial—controls
+seat limits and renewal duration. See [`docs/LICENSE_SERVER.md`](docs/LICENSE_SERVER.md).
 
 ## Logging and diagnostics
 

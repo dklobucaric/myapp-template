@@ -33,8 +33,6 @@
 - Local standard ZIP export with redacted runtime/config/log data
 - Automated logging and diagnostics regression tests
 
-## Planned
-
 ### v0.1.4 — Update foundation
 
 - `UpdateManager` asynchronous mock CDN manifest fetch
@@ -46,13 +44,25 @@
 
 ### v0.1.5 — License foundation
 
-- LicenseManager
-- License import
-- Product ID validation
-- License status UI
+- `LicenseManager` mock license-status checks
+- Server-authoritative entitlement, duration and device-limit display
+- Manual and recurring automatic license checks
+- Redacted persisted `license-state.json`
+- Offline grace and safe clock-anomaly behavior
+- LicenseManager automated tests
 
-### v0.1.6 — Release and tooling polish
+## Planned
+
+### v0.1.6 — Artifact download and verification
+
+- Download artifact to a local cache
+- SHA-256 content verification
+- Clear download/cache failure states
+- No installation or restart yet
+
+### v0.1.7 — Release and tooling polish
 
 - Release scripts
 - Manifest generation validation
 - Packaging workflow polish
+- Branding/icon metadata for Linux, Windows and macOS

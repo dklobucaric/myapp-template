@@ -4,6 +4,28 @@ All notable changes to this project are documented in this file.
 
 ## Unreleased
 
+## [0.1.5] - 2026-07-03
+
+### Added
+
+- `LicenseManager` with asynchronous server-authoritative mock license checks.
+- License response validation for product identity, serial, server status, plan duration, expiry, grace and device counts.
+- Manual **Help → Check License Status** flow and recurring automatic license checks.
+- Redacted atomically persisted `license-state.json`.
+- Active, grace, expired, revoked, offline-grace and online-verification-required states.
+- License Dashboard and Status Bar display.
+- LicenseManager automated tests and `docs/LICENSE_SERVER.md`.
+
+### Changed
+
+- License Server Settings now include automatic checks and a fallback interval.
+- Mock license response now demonstrates an annual 365-day entitlement with one active device out of three.
+
+### Deferred
+
+- License import, activation, cryptographic signatures, encryption, user portal and production billing remain out of scope.
+
+
 ## [0.1.4] - 2026-07-03
 
 ### Added

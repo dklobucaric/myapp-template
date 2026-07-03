@@ -46,3 +46,17 @@
 | UPD-004 | Platform/architecture mismatch | Unsupported-platform result. |
 | UPD-005 | CDN unavailable | Network error result is persisted without query secrets. |
 | UPD-006 | Manual check | Dashboard and Status Bar refresh; no artifact is downloaded. |
+
+
+## License foundation
+
+| ID | Scenario | Expected result |
+| --- | --- | --- |
+| LIC-001 | Valid active response | Active server status, redacted serial, duration and device count are displayed. |
+| LIC-002 | Product ID mismatch or malformed response | Safe invalid-response result; no crash. |
+| LIC-003 | Server reports expired or revoked | Server status is preserved and shown without local inference. |
+| LIC-004 | License server unavailable after active verification | Offline grace is shown while the cached server grace timestamp is valid. |
+| LIC-005 | Local clock appears earlier than cached server time | Client warns/retries later; it does not locally lock the app. |
+| LIC-006 | Cached grace may have elapsed while offline | Online verification required; client does not locally declare revocation. |
+| LIC-007 | Automatic license checks enabled | Due checks run in the background; settings changes reschedule them. |
+| LIC-008 | Inspect `license-state.json` | No full serial, token, password or query secret is persisted. |

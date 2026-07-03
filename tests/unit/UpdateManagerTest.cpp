@@ -17,7 +17,7 @@ class UpdateManagerTest final : public QObject
 
 private:
     [[nodiscard]] AppConfig loadConfig(QTemporaryDir &directory) const;
-    [[nodiscard]] QByteArray validManifest(const AppConfig &config, const QString &version = QStringLiteral("0.1.5")) const;
+    [[nodiscard]] QByteArray validManifest(const AppConfig &config, const QString &version = QStringLiteral("99.99.99")) const;
 
 private slots:
     void init();
@@ -72,8 +72,8 @@ void UpdateManagerTest::updateAvailableManifest()
         QStringLiteral("linux"), QStringLiteral("x64")
     );
     QCOMPARE(result.status, UpdateStatus::UpdateAvailable);
-    QCOMPARE(result.availableVersion, QStringLiteral("0.1.5"));
-    QVERIFY(result.message.contains(QStringLiteral("0.1.5")));
+    QCOMPARE(result.availableVersion, QStringLiteral("99.99.99"));
+    QVERIFY(result.message.contains(QStringLiteral("99.99.99")));
 }
 
 void UpdateManagerTest::currentVersionManifest()

@@ -110,3 +110,23 @@ redacts common secret-shaped values and private runtime paths, and rotates logs.
 
 The service that creates a Safe Support Package locally without copying config,
 license or credential files.
+
+
+## LicenseManager
+
+The reusable client that checks the server-authoritative license status,
+persists a redacted local state and schedules online verification.
+
+## License Identifier / Serial
+
+An opaque identifier for an entitlement. It does not encode the product,
+duration or number of devices.
+
+## Device Limit
+
+The server-enforced maximum number of active installations for a license.
+
+## Offline Grace
+
+A temporary cached state used after a previously verified license cannot reach
+the server. It is bounded by the server-provided grace timestamp.

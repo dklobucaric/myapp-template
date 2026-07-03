@@ -4,30 +4,27 @@
   "serial": "7Q4M-2K9X-T8DV-A5PN",
   "productId": "hr.ddlab.myapp-template",
   "status": "active",
-
   "licensedTo": {
     "name": "Example User",
     "email": "user@example.invalid"
   },
-
   "subscription": {
     "plan": "annual",
     "startsAt": "2026-07-03T00:00:00Z",
     "expiresAt": "2027-07-03T23:59:59Z",
-    "graceUntil": "2027-07-17T23:59:59Z"
+    "graceUntil": "2027-07-17T23:59:59Z",
+    "durationDays": 365
   },
-
   "features": [
     "updates",
     "diagnostics"
   ],
-
   "activation": {
     "deviceLimit": 3,
     "installationId": null,
-    "activatedAt": null
+    "activatedAt": null,
+    "activeDeviceCount": 1
   },
-
   "verification": {
     "serverTime": "2026-07-03T16:00:00Z",
     "lastVerifiedAt": "2026-07-03T16:00:00Z",
