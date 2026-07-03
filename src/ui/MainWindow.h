@@ -18,6 +18,9 @@ public:
 private:
     void createMenuBar();
     void createStatusBar();
+    void rebuildDashboard();
+    void applyConfiguration(const AppConfig &config);
+    void refreshStatusBar();
 
     void showSettingsDialog();
     void showUpdatePlaceholder();

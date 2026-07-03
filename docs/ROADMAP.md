@@ -15,37 +15,40 @@
 - Qt resource-bundled product and environment profiles
 - Runtime AppData `config.json`
 - ConfigManager unit tests
-- Read-only Settings Dialog shell
+- Settings Dialog shell
+
+### v0.1.2 — Functional Settings
+
+- Functional Settings pages with Apply, OK, Cancel and reset actions
+- Live theme, accent color, font-scale and Status Bar preview
+- Persistent local overrides for layout, update, CDN, license endpoint and
+  diagnostics preferences
+- ThemeManager application appearance subsystem
+- Additional configuration reset and preview tests
 
 ## Planned
 
-### v0.1.2 — Documentation baseline polish
-
-- Complete remaining reference documents
-- Contributor guidance
-- Release workflow documentation
-
-### v0.1.3 — Appearance and layout
-
-- Editable theme and accent color controls
-- Layout controls
-- Persisted window geometry
-
-### v0.1.4 — Logging and diagnostics
+### v0.1.3 — Logging and diagnostics
 
 - Structured logs
 - Diagnostics Settings Page actions
 - Support bundle export
 
-### v0.1.5 — Update foundation
+### v0.1.4 — Update foundation
 
 - UpdateManager
 - Mock CDN manifest fetch
 - Update Indicator in the Status Bar
 
-### v0.1.6 — License foundation
+### v0.1.5 — License foundation
 
 - LicenseManager
 - License import
 - Product ID validation
 - License status UI
+
+### v0.1.6 — Release and tooling polish
+
+- Release scripts
+- Manifest generation validation
+- Packaging workflow polish

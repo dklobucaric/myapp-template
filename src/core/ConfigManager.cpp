@@ -14,6 +14,7 @@ constexpr auto kAppProfileResource = ":/defaults/app-profile.json";
 constexpr auto kDefaultConfigResource = ":/defaults/config.json";
 constexpr auto kProfileResourcePrefix = ":/profiles/";
 constexpr auto kUserConfigFileName = "config.json";
+constexpr auto kSchemaVersion = 1;
 
 QString stringValue(
     const QJsonObject &object,
@@ -120,14 +121,14 @@ ConfigLoadResult ConfigManager::load(
         );
     }
 
-    QJsonObject effectiveConfig = mergeObjects(
+    QJsonObject baselineConfig = mergeObjects(
         defaultConfig,
         appProfileDefaultsAsConfig(appProfile)
     );
 
     QJsonObject profileOverlay = environmentProfile;
     profileOverlay.remove(QStringLiteral("environment"));
-    effectiveConfig = mergeObjects(effectiveConfig, profileOverlay);
+    baselineConfig = mergeObjects(baselineConfig, profileOverlay);
 
     const QString configPath = userConfigPath(configDirectoryOverride);
     const QFileInfo configFileInfo(configPath);
@@ -142,17 +143,10 @@ ConfigLoadResult ConfigManager::load(
 
     QJsonObject userOverrides;
     if (!QFile::exists(configPath)) {
-        const QJsonObject initialUserConfig{
-            {QStringLiteral("schemaVersion"), 1},
-            {QStringLiteral("appearance"), QJsonObject{}},
-            {QStringLiteral("layout"), QJsonObject{}},
-            {QStringLiteral("updates"), QJsonObject{}},
-            {QStringLiteral("services"), QJsonObject{}},
-            {QStringLiteral("diagnostics"), QJsonObject{}}
-        };
+        userOverrides = emptyUserOverrides();
 
         errorMessage.clear();
-        if (writeJsonAtomically(configPath, initialUserConfig, &errorMessage)) {
+        if (writeJsonAtomically(configPath, userOverrides, &errorMessage)) {
             result.config.userConfigCreated = true;
         } else {
             result.warnings.append(
@@ -167,19 +161,12 @@ ConfigLoadResult ConfigManager::load(
                 QStringLiteral("User config could not be read and was ignored: %1")
                     .arg(errorMessage)
             );
+            userOverrides = emptyUserOverrides();
         }
     }
 
-    effectiveConfig = mergeObjects(effectiveConfig, userOverrides);
-
-    const QJsonObject appearance = objectValue(effectiveConfig, QStringLiteral("appearance"));
-    const QJsonObject layout = objectValue(effectiveConfig, QStringLiteral("layout"));
-    const QJsonObject updates = objectValue(effectiveConfig, QStringLiteral("updates"));
-    const QJsonObject services = objectValue(effectiveConfig, QStringLiteral("services"));
-    const QJsonObject diagnostics = objectValue(effectiveConfig, QStringLiteral("diagnostics"));
-    const QJsonObject appDefaults = objectValue(appProfile, QStringLiteral("defaults"));
-
     AppConfig &config = result.config;
+    const QJsonObject appDefaults = objectValue(appProfile, QStringLiteral("defaults"));
     config.appName = stringValue(appProfile, QStringLiteral("appName"), QStringLiteral("MyAppTemplate"));
     config.appId = stringValue(appProfile, QStringLiteral("appId"));
     config.productId = stringValue(appProfile, QStringLiteral("productId"));
@@ -187,57 +174,30 @@ ConfigLoadResult ConfigManager::load(
     config.version = stringValue(appProfile, QStringLiteral("version"));
     config.environment = environment;
 
-    config.theme = stringValue(appearance, QStringLiteral("theme"), QStringLiteral("system"));
-    config.accentColor = stringValue(appearance, QStringLiteral("accentColor"), QStringLiteral("#3B82F6"));
-    config.fontScale = doubleValue(appearance, QStringLiteral("fontScale"), 1.0);
-    config.density = stringValue(appearance, QStringLiteral("density"), QStringLiteral("comfortable"));
-
-    config.windowWidth = intValue(
-        layout,
-        QStringLiteral("windowWidth"),
-        intValue(appDefaults, QStringLiteral("windowWidth"), 1200)
-    );
-    config.windowHeight = intValue(
-        layout,
-        QStringLiteral("windowHeight"),
-        intValue(appDefaults, QStringLiteral("windowHeight"), 800)
-    );
-    config.rememberWindowSize = boolValue(layout, QStringLiteral("rememberWindowSize"), true);
-    config.rememberWindowPosition = boolValue(layout, QStringLiteral("rememberWindowPosition"), true);
-    config.showStatusBar = boolValue(
-        layout,
-        QStringLiteral("showStatusBar"),
-        boolValue(appDefaults, QStringLiteral("showStatusBar"), true)
-    );
-    config.showToolbar = boolValue(layout, QStringLiteral("showToolbar"), true);
-
-    config.updateChannel = stringValue(updates, QStringLiteral("channel"), QStringLiteral("development"));
-    config.automaticUpdateChecks = boolValue(updates, QStringLiteral("automaticChecks"), true);
+    // These initial values are only fallbacks if a future profile omits a
+    // field from the fully merged JSON object.
+    config.theme = stringValue(appDefaults, QStringLiteral("theme"), QStringLiteral("system"));
+    config.accentColor = stringValue(appDefaults, QStringLiteral("accentColor"), QStringLiteral("#3B82F6"));
+    config.windowWidth = intValue(appDefaults, QStringLiteral("windowWidth"), 1200);
+    config.windowHeight = intValue(appDefaults, QStringLiteral("windowHeight"), 800);
+    config.showStatusBar = boolValue(appDefaults, QStringLiteral("showStatusBar"), true);
     config.updateCheckIntervalMinutes = intValue(
-        updates,
-        QStringLiteral("checkIntervalMinutes"),
-        intValue(appDefaults, QStringLiteral("updateCheckIntervalMinutes"), 60)
+        appDefaults,
+        QStringLiteral("updateCheckIntervalMinutes"),
+        60
     );
-    config.autoDownloadUpdates = boolValue(updates, QStringLiteral("autoDownload"), false);
     config.licenseCheckIntervalMinutes = intValue(
         appDefaults,
         QStringLiteral("licenseCheckIntervalMinutes"),
         60
     );
+    config.loggingLevel = stringValue(appDefaults, QStringLiteral("loggingLevel"), QStringLiteral("info"));
 
-    config.cdnBaseUrl = stringValue(services, QStringLiteral("cdnBaseUrl"));
-    config.licensePortalUrl = stringValue(services, QStringLiteral("licensePortalUrl"));
-    config.licenseApiBaseUrl = stringValue(services, QStringLiteral("licenseApiBaseUrl"));
-
-    config.loggingEnabled = boolValue(diagnostics, QStringLiteral("loggingEnabled"), true);
-    config.loggingLevel = stringValue(
-        diagnostics,
-        QStringLiteral("loggingLevel"),
-        stringValue(appDefaults, QStringLiteral("loggingLevel"), QStringLiteral("info"))
-    );
-
+    config.baselineConfig = baselineConfig;
+    config.userOverrides = userOverrides;
+    config.effectiveConfig = mergeObjects(baselineConfig, userOverrides);
     config.userConfigPath = configPath;
-    config.effectiveConfig = effectiveConfig;
+    populateRuntimeSettings(config, config.effectiveConfig);
 
     return result;
 }
@@ -255,15 +215,47 @@ QString ConfigManager::userConfigPath(const QString &configDirectoryOverride)
     return QDir(configDirectory).filePath(kUserConfigFileName);
 }
 
+QJsonObject ConfigManager::emptyUserOverrides()
+{
+    return {
+        {QStringLiteral("schemaVersion"), kSchemaVersion},
+        {QStringLiteral("appearance"), QJsonObject{}},
+        {QStringLiteral("layout"), QJsonObject{}},
+        {QStringLiteral("updates"), QJsonObject{}},
+        {QStringLiteral("services"), QJsonObject{}},
+        {QStringLiteral("diagnostics"), QJsonObject{}}
+    };
+}
+
+AppConfig ConfigManager::configWithUserOverrides(
+    const AppConfig &baseConfig,
+    const QJsonObject &userOverrides
+)
+{
+    AppConfig preview = baseConfig;
+    QJsonObject normalizedOverrides = userOverrides;
+    normalizedOverrides.insert(QStringLiteral("schemaVersion"), kSchemaVersion);
+
+    preview.userOverrides = normalizedOverrides;
+    preview.effectiveConfig = mergeObjects(baseConfig.baselineConfig, normalizedOverrides);
+    preview.userConfigCreated = false;
+    populateRuntimeSettings(preview, preview.effectiveConfig);
+
+    return preview;
+}
+
 bool ConfigManager::saveUserOverrides(
     const QJsonObject &overrides,
     const QString &configDirectoryOverride,
     QString *errorMessage
 )
 {
+    QJsonObject normalizedOverrides = overrides;
+    normalizedOverrides.insert(QStringLiteral("schemaVersion"), kSchemaVersion);
+
     return writeJsonAtomically(
         userConfigPath(configDirectoryOverride),
-        overrides,
+        normalizedOverrides,
         errorMessage
     );
 }
@@ -364,6 +356,77 @@ QJsonObject ConfigManager::appProfileDefaultsAsConfig(
     );
 
     return config;
+}
+
+void ConfigManager::populateRuntimeSettings(
+    AppConfig &config,
+    const QJsonObject &effectiveConfig
+)
+{
+    const QJsonObject appearance = objectValue(effectiveConfig, QStringLiteral("appearance"));
+    const QJsonObject layout = objectValue(effectiveConfig, QStringLiteral("layout"));
+    const QJsonObject updates = objectValue(effectiveConfig, QStringLiteral("updates"));
+    const QJsonObject services = objectValue(effectiveConfig, QStringLiteral("services"));
+    const QJsonObject diagnostics = objectValue(effectiveConfig, QStringLiteral("diagnostics"));
+
+    config.theme = stringValue(appearance, QStringLiteral("theme"), config.theme);
+    config.accentColor = stringValue(appearance, QStringLiteral("accentColor"), config.accentColor);
+    config.fontScale = doubleValue(appearance, QStringLiteral("fontScale"), config.fontScale);
+    config.density = stringValue(appearance, QStringLiteral("density"), config.density);
+
+    config.windowWidth = intValue(layout, QStringLiteral("windowWidth"), config.windowWidth);
+    config.windowHeight = intValue(layout, QStringLiteral("windowHeight"), config.windowHeight);
+    config.rememberWindowSize = boolValue(
+        layout,
+        QStringLiteral("rememberWindowSize"),
+        config.rememberWindowSize
+    );
+    config.rememberWindowPosition = boolValue(
+        layout,
+        QStringLiteral("rememberWindowPosition"),
+        config.rememberWindowPosition
+    );
+    config.showStatusBar = boolValue(layout, QStringLiteral("showStatusBar"), config.showStatusBar);
+
+    config.updateChannel = stringValue(updates, QStringLiteral("channel"), config.updateChannel);
+    config.automaticUpdateChecks = boolValue(
+        updates,
+        QStringLiteral("automaticChecks"),
+        config.automaticUpdateChecks
+    );
+    config.updateCheckIntervalMinutes = intValue(
+        updates,
+        QStringLiteral("checkIntervalMinutes"),
+        config.updateCheckIntervalMinutes
+    );
+    config.autoDownloadUpdates = boolValue(
+        updates,
+        QStringLiteral("autoDownload"),
+        config.autoDownloadUpdates
+    );
+
+    config.cdnBaseUrl = stringValue(services, QStringLiteral("cdnBaseUrl"), config.cdnBaseUrl);
+    config.licensePortalUrl = stringValue(
+        services,
+        QStringLiteral("licensePortalUrl"),
+        config.licensePortalUrl
+    );
+    config.licenseApiBaseUrl = stringValue(
+        services,
+        QStringLiteral("licenseApiBaseUrl"),
+        config.licenseApiBaseUrl
+    );
+
+    config.loggingEnabled = boolValue(
+        diagnostics,
+        QStringLiteral("loggingEnabled"),
+        config.loggingEnabled
+    );
+    config.loggingLevel = stringValue(
+        diagnostics,
+        QStringLiteral("loggingLevel"),
+        config.loggingLevel
+    );
 }
 
 bool ConfigManager::writeJsonAtomically(

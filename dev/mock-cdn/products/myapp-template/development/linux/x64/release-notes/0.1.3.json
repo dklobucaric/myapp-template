@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.3",
+  "title": "Mock settings release for MyAppTemplate",
+  "items": [
+    "Added functional Settings pages.",
+    "Added persisted user configuration overrides.",
+    "Added theme, layout and endpoint controls."
+  ]
+}

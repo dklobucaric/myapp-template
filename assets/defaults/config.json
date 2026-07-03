@@ -13,8 +13,7 @@
     "windowHeight": 800,
     "rememberWindowSize": true,
     "rememberWindowPosition": true,
-    "showStatusBar": true,
-    "showToolbar": true
+    "showStatusBar": true
   },
 
   "updates": {

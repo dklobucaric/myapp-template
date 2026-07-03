@@ -14,20 +14,26 @@ CTest.
 
 `ConfigManagerTests` verifies:
 
+- embedded configuration resources are available
 - initial user `config.json` creation
 - environment profile endpoint overrides
 - user config override precedence
 - safe fallback after malformed user JSON
+- clearing user overrides restores environment values
+- preview configuration uses the baseline correctly when overrides change
 
-## Manual smoke test for v0.1.1
+## Manual smoke test for v0.1.2
 
 1. Start the app normally.
-2. Confirm the Template Dashboard shows values from JSON configuration.
-3. Open Settings and move through every category.
-4. Check Settings → Advanced for the runtime config path.
-5. Start with `--profile staging` and confirm the staging endpoint appears in
-   the dashboard and Settings.
-6. Edit the local `config.json` manually, restart, and confirm the override is
-   visible.
-7. Put malformed JSON in local `config.json`, start again, and confirm the app
-   stays open and shows a configuration warning.
+2. Open **Settings → Appearance** and switch between System, Light and Dark.
+3. Change Accent Color and Font Scale; confirm the preview is immediate.
+4. Click Cancel before Apply; confirm the original appearance returns.
+5. Change the Status Bar visibility in **Layout**; confirm the preview is
+   immediate and persists after Apply and restart.
+6. Change the Update Channel and CDN URL; Apply, restart and confirm the
+   Template Dashboard and Status Bar reflect the values.
+7. Use Reset Current Page and confirm the active profile values return.
+8. Use Reset All Settings and confirm all local overrides are removed.
+9. Start with `--profile staging` and confirm staging values remain active
+   until a local override is set.
+10. Run `./scripts/test.sh debug` and confirm all tests pass.
