@@ -1,0 +1,11 @@
+{
+  "environment": "production",
+  "services": {
+    "cdnBaseUrl": "https://cdn.dd-lab.hr/products/myapp-template",
+    "licensePortalUrl": "https://licence.dd-lab.hr",
+    "licenseApiBaseUrl": "https://licence.dd-lab.hr/api/v1"
+  },
+  "updates": {
+    "channel": "stable"
+  }
+}

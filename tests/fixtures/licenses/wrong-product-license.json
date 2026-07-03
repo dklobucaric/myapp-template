@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "licenseId": "lic_wrong_product_000001",
+  "serial": "WRNG-PROD-UCT0-0001",
+  "productId": "hr.ddlab.some-other-app",
+  "status": "active",
+
+  "licensedTo": {
+    "name": "Wrong Product User",
+    "email": "wrong-product@example.invalid"
+  },
+
+  "subscription": {
+    "plan": "annual",
+    "startsAt": "2026-07-03T00:00:00Z",
+    "expiresAt": "2027-07-03T23:59:59Z",
+    "graceUntil": "2027-07-17T23:59:59Z"
+  },
+
+  "features": [
+    "updates"
+  ],
+
+  "activation": {
+    "deviceLimit": 1,
+    "installationId": null,
+    "activatedAt": null
+  },
+
+  "verification": {
+    "serverTime": "2026-07-03T16:00:00Z",
+    "lastVerifiedAt": "2026-07-03T16:00:00Z",
+    "remainingDays": 365,
+    "nextOnlineCheckAfter": "2026-07-03T17:00:00Z"
+  }
+}

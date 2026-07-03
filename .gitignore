@@ -1,0 +1,62 @@
+# Build directories
+/build/
+/build-*/
+/cmake-build-*/
+/out/
+
+# CMake / Ninja
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+cmake_install.cmake
+compile_commands.json
+build.ninja
+.ninja_deps
+.ninja_log
+
+# Qt Creator
+*.user
+*.user.*
+*.autosave
+*.autosave.*
+*.config
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs and runtime data
+*.log
+logs/
+diagnostics/
+cache/
+
+# Local application data and secrets
+local/
+.env
+.env.*
+!.env.example
+config.local.json
+app-profile.local.json
+
+# Packaging artifacts
+dist/
+artifacts/
+packages/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python helpers
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local machine checks
+preflight.txt
+
+# Local mock-service logs
+.mock-cdn.log
+.mock-license-server.log

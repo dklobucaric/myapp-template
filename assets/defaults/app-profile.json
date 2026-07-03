@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "appName": "MyAppTemplate",
+  "appId": "hr.ddlab.myapp-template",
+  "productId": "hr.ddlab.myapp-template",
+  "vendor": "DD-Lab",
+  "version": "0.1.0",
+  "environment": "development",
+
+  "defaults": {
+    "theme": "system",
+    "accentColor": "#3B82F6",
+    "windowWidth": 1200,
+    "windowHeight": 800,
+    "showStatusBar": true,
+    "updateCheckIntervalMinutes": 60,
+    "licenseCheckIntervalMinutes": 60,
+    "loggingLevel": "debug"
+  },
+
+  "services": {
+    "cdnBaseUrl": "http://localhost:8088/products/myapp-template",
+    "licensePortalUrl": "http://localhost:8089",
+    "licenseApiBaseUrl": "http://localhost:8089/api/v1"
+  },
+
+  "features": {
+    "updatesEnabled": true,
+    "licenseEnabled": true,
+    "diagnosticsEnabled": true
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "environment": "staging",
+  "services": {
+    "cdnBaseUrl": "https://staging-cdn.dd-lab.hr/products/myapp-template",
+    "licensePortalUrl": "https://staging-licence.dd-lab.hr",
+    "licenseApiBaseUrl": "https://staging-licence.dd-lab.hr/api/v1"
+  },
+  "updates": {
+    "channel": "beta"
+  }
+}

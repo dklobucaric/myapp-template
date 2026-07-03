@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "productId": "hr.ddlab.myapp-template",
+  "channel": "development",
+  "platform": "linux",
+  "architecture": "x64",
+  "version": "0.1.0",
+  "publishedAt": "2026-07-03T16:00:00Z",
+  "artifactFileName": "MyAppTemplate-0.1.0.AppImage",
+  "artifactUrl": "https://example.invalid/MyAppTemplate-0.1.0.AppImage",
+  "sha256": "placeholder",
+  "sizeBytes": 1,
+  "mandatory": false
+}
