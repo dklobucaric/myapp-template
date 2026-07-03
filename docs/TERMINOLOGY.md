@@ -90,3 +90,12 @@ The content delivery location used for installers, release notes and update mani
 ## Diagnostics Bundle
 
 A support ZIP containing safe technical information, logs and masked license status.
+
+## ConfigManager
+
+Reusable core service that loads and merges the app profile, default config,
+environment profile and local user config into one `AppConfig` runtime model.
+
+## AppConfig
+
+The normalized runtime configuration model consumed by the application shell.

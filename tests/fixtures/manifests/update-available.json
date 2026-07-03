@@ -5,16 +5,16 @@
   "platform": "linux",
   "architecture": "x64",
 
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publishedAt": "2026-07-03T16:00:00Z",
 
-  "artifactFileName": "MyAppTemplate-0.1.1.AppImage",
-  "artifactUrl": "http://localhost:8088/products/myapp-template/development/linux/x64/MyAppTemplate-0.1.1.AppImage",
+  "artifactFileName": "MyAppTemplate-0.1.2.AppImage",
+  "artifactUrl": "http://localhost:8088/products/myapp-template/development/linux/x64/MyAppTemplate-0.1.2.AppImage",
 
-  "sha256": "f408085cb723948d3e471ba10306e86060579a928ffc5c9ebd9aefd9cd251b62",
+  "sha256": "99d0e15ca343eef7803f5aa1bfa5beccc4906b1f23f6603d45b2fc18d529ef4f",
   "sizeBytes": 50,
 
-  "releaseNotesUrl": "http://localhost:8088/products/myapp-template/development/linux/x64/release-notes/0.1.1.json",
+  "releaseNotesUrl": "http://localhost:8088/products/myapp-template/development/linux/x64/release-notes/0.1.2.json",
 
   "mandatory": false
 }
