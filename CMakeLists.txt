@@ -28,8 +28,12 @@ set(MYAPP_TEMPLATE_RESOURCES
 )
 
 set(MYAPP_TEMPLATE_CORE_SOURCES
+  src/core/AppLogger.cpp
+  src/core/AppLogger.h
   src/core/ConfigManager.cpp
   src/core/ConfigManager.h
+  src/core/DiagnosticsManager.cpp
+  src/core/DiagnosticsManager.h
 )
 
 qt_add_executable(myapp-template
@@ -90,4 +94,23 @@ if(BUILD_TESTING)
   )
 
   add_test(NAME ConfigManagerTests COMMAND config-manager-tests)
+
+  qt_add_executable(logging-diagnostics-tests
+    tests/unit/LoggingDiagnosticsTest.cpp
+    ${MYAPP_TEMPLATE_CORE_SOURCES}
+    ${MYAPP_TEMPLATE_RESOURCES}
+  )
+
+  target_include_directories(logging-diagnostics-tests
+    PRIVATE
+      "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  )
+
+  target_link_libraries(logging-diagnostics-tests
+    PRIVATE
+      Qt6::Core
+      Qt6::Test
+  )
+
+  add_test(NAME LoggingDiagnosticsTests COMMAND logging-diagnostics-tests)
 endif()

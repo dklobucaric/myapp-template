@@ -5,6 +5,7 @@
 #include <QGuiApplication>
 #include <QDebug>
 
+#include "core/AppLogger.h"
 #include "core/ConfigManager.h"
 #include "ui/MainWindow.h"
 
@@ -39,19 +40,30 @@ int main(int argc, char *argv[])
         parser.value(profileOption)
     );
 
-    for (const QString &warning : loadResult.warnings) {
-        qWarning().noquote() << "Configuration warning:" << warning;
-    }
-
     if (!loadResult.isUsable()) {
         qCritical() << "The application profile could not be loaded.";
         return 1;
     }
 
     const AppConfig &config = loadResult.config;
+    AppLogger::configure(config);
+    AppLogger::info(
+        QStringLiteral("app"),
+        QStringLiteral("Application started. version=%1 environment=%2")
+            .arg(config.version, config.environment)
+    );
+
+    for (const QString &warning : loadResult.warnings) {
+        qWarning().noquote() << "Configuration warning:" << warning;
+        AppLogger::warning(QStringLiteral("config"), warning);
+    }
     QGuiApplication::setApplicationDisplayName(config.appName);
     QCoreApplication::setApplicationVersion(config.version);
     QCoreApplication::setOrganizationName(config.vendor);
+
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, [] {
+        AppLogger::info(QStringLiteral("app"), QStringLiteral("Application shutting down."));
+    });
 
     MainWindow window(config, loadResult.warnings);
     window.show();

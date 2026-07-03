@@ -4,6 +4,25 @@ All notable changes to this project are documented in this file.
 
 ## Unreleased
 
+## [0.1.3] - 2026-07-03
+
+### Added
+
+- `AppLogger` with local structured logging, level filtering, redaction and
+  bounded log rotation.
+- `DiagnosticsManager` with local safe support ZIP creation.
+- Diagnostics Settings actions to open the logs folder and create a support
+  package without automatic upload.
+- Logging and diagnostics automated tests covering disabled logging, filtering,
+  redaction, rotation and safe-package content.
+- `docs/DIAGNOSTICS.md` with package contents and privacy guarantees.
+
+### Changed
+
+- Template Dashboard now shows the current logs directory and diagnostics
+  package availability.
+- Mock update release advanced to `0.1.4` for the v0.1.3 application build.
+
 ## [0.1.2] - 2026-07-03
 
 ### Added

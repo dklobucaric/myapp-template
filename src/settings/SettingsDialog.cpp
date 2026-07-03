@@ -1,10 +1,14 @@
 #include "settings/SettingsDialog.h"
 
+#include "core/AppLogger.h"
+#include "core/DiagnosticsManager.h"
+
 #include <QCheckBox>
 #include <QColor>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QDesktopServices>
+#include <QDir>
 #include <QDialogButtonBox>
 #include <QFileInfo>
 #include <QFormLayout>
@@ -435,13 +439,29 @@ QWidget *SettingsDialog::createDiagnosticsPage()
     form->addRow(tr("Log level:"), m_loggingLevelCombo);
 
     layout->addLayout(form);
+
+    auto *actionsRow = new QHBoxLayout();
+    auto *openLogsButton = new QPushButton(tr("Open Logs Folder"), page);
+    auto *createPackageButton = new QPushButton(tr("Create Safe Support Package"), page);
+    actionsRow->addWidget(openLogsButton);
+    actionsRow->addWidget(createPackageButton);
+    actionsRow->addStretch();
+    layout->addLayout(actionsRow);
+
     layout->addWidget(createHint(
-        tr("Logging preferences are persisted now. Structured log files and diagnostics export "
-           "arrive in the next diagnostics milestone."),
+        tr("Logs stay on this device. A support package is created locally as a ZIP with a "
+           "redacted runtime summary, safe config summary and bounded log excerpt. Nothing is "
+           "uploaded automatically."),
         page
     ));
     layout->addStretch();
 
+    connect(openLogsButton, &QPushButton::clicked, this, [this] {
+        openLogsFolder();
+    });
+    connect(createPackageButton, &QPushButton::clicked, this, [this] {
+        createSafeSupportPackage();
+    });
     connect(m_loggingEnabledCheck, &QCheckBox::toggled, this, [this] {
         previewCurrentControls();
     });
@@ -704,6 +724,57 @@ void SettingsDialog::openConfigFolder() const
     QDesktopServices::openUrl(QUrl::fromLocalFile(configFile.absolutePath()));
 }
 
+void SettingsDialog::openLogsFolder()
+{
+    const QString directory = AppLogger::logDirectoryFor(m_appliedConfig);
+    if (directory.isEmpty() || !QDir().mkpath(directory)) {
+        QMessageBox::warning(
+            this,
+            tr("Could Not Open Logs Folder"),
+            tr("The local logs folder could not be created.")
+        );
+        return;
+    }
+
+    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(directory))) {
+        QMessageBox::warning(
+            this,
+            tr("Could Not Open Logs Folder"),
+            tr("The operating system did not open the local logs folder.")
+        );
+    }
+}
+
+void SettingsDialog::createSafeSupportPackage()
+{
+    AppLogger::info(QStringLiteral("diagnostics"), QStringLiteral("Safe support package requested."));
+
+    const DiagnosticsResult result = DiagnosticsManager::createSafeSupportPackage(m_appliedConfig);
+    if (!result.success) {
+        AppLogger::error(
+            QStringLiteral("diagnostics"),
+            QStringLiteral("Safe support package creation failed: %1").arg(result.errorMessage)
+        );
+        QMessageBox::critical(
+            this,
+            tr("Could Not Create Support Package"),
+            tr("The support package could not be created.\n\n%1").arg(result.errorMessage)
+        );
+        return;
+    }
+
+    AppLogger::info(
+        QStringLiteral("diagnostics"),
+        QStringLiteral("Safe support package created at %1").arg(result.packagePath)
+    );
+    QMessageBox::information(
+        this,
+        tr("Safe Support Package Created"),
+        tr("The package was created locally and was not uploaded anywhere.\n\n%1")
+            .arg(result.packagePath)
+    );
+}
+
 bool SettingsDialog::persistChanges()
 {
     const QColor accentColor(m_accentColorEdit->text().trimmed());
@@ -769,6 +840,7 @@ bool SettingsDialog::persistChanges()
     if (m_previewCallback) {
         m_previewCallback(m_appliedConfig);
     }
+    AppLogger::info(QStringLiteral("settings"), QStringLiteral("Settings were saved."));
 
     return true;
 }

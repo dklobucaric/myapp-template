@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.4",
+  "title": "Mock logging and diagnostics release for MyAppTemplate",
+  "items": [
+    "Added local structured logging.",
+    "Added safe diagnostics ZIP export.",
+    "Added log redaction and rotation."
+  ]
+}

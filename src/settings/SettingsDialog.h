@@ -53,6 +53,8 @@ private:
     void resetCurrentPage();
     void resetAllSettings();
     void openConfigFolder() const;
+    void openLogsFolder();
+    void createSafeSupportPackage();
 
     bool persistChanges();
     void applyAndKeepOpen();

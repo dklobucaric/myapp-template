@@ -16,8 +16,10 @@ AppConfig runtime model
         ↓
 MainWindow
 ├── ThemeManager
+├── AppLogger
 ├── Template Dashboard
 ├── Functional Settings Dialog
+├── DiagnosticsManager
 └── Status Bar
 ```
 
@@ -51,3 +53,14 @@ Default JSON files and environment profiles are embedded into each executable
 through `resources/myapp_template.qrc`. CMake `CMAKE_AUTORCC` is explicitly
 enabled before targets are created; `qt_standard_project_setup()` enables
 AUTOMOC/AUTOUIC but does not enable AUTORCC.
+
+## Logging and safe diagnostics
+
+`AppLogger` is a local-only structured logger. It applies the Diagnostics
+settings immediately, filters messages by level, redacts secret-shaped values
+and private runtime paths, and rotates `app.log` before it grows without bound.
+
+`DiagnosticsManager` creates a standard ZIP locally. It contains only a
+runtime summary, a safe configuration summary and a bounded, redacted excerpt
+of the current log. It never copies `config.json`, licenses, passwords, tokens
+or complete home-directory paths. The archive is not uploaded by the app.

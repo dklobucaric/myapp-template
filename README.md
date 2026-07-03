@@ -20,7 +20,7 @@ products:
 
 ## Development status
 
-Current version: `0.1.2`
+Current version: `0.1.3`
 
 Primary development platform: Linux.
 
@@ -50,6 +50,12 @@ uses the correct development, staging or production defaults unless the user
 explicitly overrides a value.
 
 See [`docs/SETTINGS.md`](docs/SETTINGS.md) for the complete behavior.
+
+## Logging and diagnostics
+
+The **Diagnostics** Settings page controls local structured logging, opens the
+local logs folder and creates a safe support ZIP. The app never uploads a
+support package automatically. See [`docs/DIAGNOSTICS.md`](docs/DIAGNOSTICS.md).
 
 ## Where to start a new application
 

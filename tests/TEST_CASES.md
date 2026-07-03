@@ -22,3 +22,15 @@
 | SET-005 | Change channel and CDN URL | Dashboard and Status Bar display the persisted update settings. |
 | SET-006 | Reset Current Page | Only the selected page's local overrides are removed. |
 | SET-007 | Reset All Settings | All local overrides are removed after confirmation. |
+
+## Logging and safe diagnostics
+
+| ID | Scenario | Expected result |
+| --- | --- | --- |
+| LOG-001 | Logging disabled | No log file is created or appended. |
+| LOG-002 | Log level set to warning | Debug and info messages are filtered; warning/error messages remain. |
+| LOG-003 | Secret-shaped value in a message | Password, token, serial and bearer values are redacted before disk write. |
+| LOG-004 | Log reaches rotation limit | Current log rotates and only configured archive count remains. |
+| DIA-001 | Create safe support package | Local standard ZIP is created; no upload occurs. |
+| DIA-002 | Inspect package content | It includes runtime/config summaries and a bounded log excerpt, not config.json or licenses. |
+| DIA-003 | Sensitive/path regression | ZIP has no known secrets, token query values or full home path. |

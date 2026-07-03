@@ -89,7 +89,8 @@ The content delivery location used for installers, release notes and update mani
 
 ## Diagnostics Bundle
 
-A support ZIP containing safe technical information, logs and masked license status.
+A local support ZIP containing safe runtime information, a redacted config summary
+and a bounded redacted log excerpt. The app never uploads it automatically.
 
 ## ConfigManager
 
@@ -99,3 +100,13 @@ environment profile and local user config into one `AppConfig` runtime model.
 ## AppConfig
 
 The normalized runtime configuration model consumed by the application shell.
+
+## AppLogger
+
+The local-only structured logger. It applies the Diagnostics logging level,
+redacts common secret-shaped values and private runtime paths, and rotates logs.
+
+## DiagnosticsManager
+
+The service that creates a Safe Support Package locally without copying config,
+license or credential files.
