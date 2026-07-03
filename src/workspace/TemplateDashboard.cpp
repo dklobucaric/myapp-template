@@ -77,7 +77,7 @@ TemplateDashboard::TemplateDashboard(
         tr("Updates"),
         {
             tr("Channel: %1").arg(config.updateChannel),
-            tr("CDN: %1")arg(config.cdnBaseUrl),
+            tr("CDN: %1").arg(config.cdnBaseUrl),
             tr("Automatic checks: every %1 minutes")
                 .arg(config.updateCheckIntervalMinutes),
             tr("UpdateManager integration: planned for version 0.1.5")
