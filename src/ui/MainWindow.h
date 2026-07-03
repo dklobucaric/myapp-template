@@ -5,7 +5,6 @@
 #include "core/ConfigManager.h"
 
 class QLabel;
-class QToolBar;
 
 class MainWindow final : public QMainWindow
 {
@@ -18,7 +17,6 @@ public:
 
 private:
     void createMenuBar();
-    void createToolBar();
     void createStatusBar();
     void rebuildDashboard();
     void applyConfiguration(const AppConfig &config);
@@ -32,7 +30,6 @@ private:
     AppConfig m_config;
     QStringList m_configurationWarnings;
 
-    QToolBar *m_mainToolBar = nullptr;
     QLabel *m_licenseIndicator = nullptr;
     QLabel *m_updateIndicator = nullptr;
     QLabel *m_versionIndicator = nullptr;

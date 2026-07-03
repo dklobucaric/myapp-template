@@ -30,11 +30,10 @@ CTest.
 4. Click Cancel before Apply; confirm the original appearance returns.
 5. Change the Status Bar visibility in **Layout**; confirm the preview is
    immediate and persists after Apply and restart.
-6. Toggle the Toolbar and confirm it persists after Apply and restart.
-7. Change the Update Channel and CDN URL; Apply, restart and confirm the
+6. Change the Update Channel and CDN URL; Apply, restart and confirm the
    Template Dashboard and Status Bar reflect the values.
-8. Use Reset Current Page and confirm the active profile values return.
-9. Use Reset All Settings and confirm all local overrides are removed.
-10. Start with `--profile staging` and confirm staging values remain active
-    until a local override is set.
-11. Run `./scripts/test.sh debug` and confirm all tests pass.
+7. Use Reset Current Page and confirm the active profile values return.
+8. Use Reset All Settings and confirm all local overrides are removed.
+9. Start with `--profile staging` and confirm staging values remain active
+   until a local override is set.
+10. Run `./scripts/test.sh debug` and confirm all tests pass.

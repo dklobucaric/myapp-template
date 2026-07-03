@@ -12,7 +12,7 @@ All notable changes to this project are documented in this file.
   Reset All Settings actions.
 - Live appearance controls for System, Light and Dark themes, accent color and
   font scale.
-- Layout controls for startup dimensions, Status Bar and Toolbar visibility.
+- Layout controls for startup dimensions and Status Bar visibility.
 - Persisted update, CDN, license endpoint and diagnostics preferences.
 - `ThemeManager` for reversible application palette and font application.
 - ConfigManager support for baseline-aware preview and reset behavior.

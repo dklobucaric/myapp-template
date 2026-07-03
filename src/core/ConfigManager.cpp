@@ -387,7 +387,6 @@ void ConfigManager::populateRuntimeSettings(
         config.rememberWindowPosition
     );
     config.showStatusBar = boolValue(layout, QStringLiteral("showStatusBar"), config.showStatusBar);
-    config.showToolbar = boolValue(layout, QStringLiteral("showToolbar"), config.showToolbar);
 
     config.updateChannel = stringValue(updates, QStringLiteral("channel"), config.updateChannel);
     config.automaticUpdateChecks = boolValue(

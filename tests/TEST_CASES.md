@@ -19,7 +19,6 @@
 | SET-002 | Change accent color and Apply | Accent updates immediately and persists after restart. |
 | SET-003 | Change font scale and Apply | Font scale updates immediately and persists after restart. |
 | SET-004 | Hide Status Bar and Apply | Status Bar hides immediately and remains hidden after restart. |
-| SET-005 | Hide Toolbar and Apply | Toolbar hides immediately and remains hidden after restart. |
-| SET-006 | Change channel and CDN URL | Dashboard and Status Bar display the persisted update settings. |
-| SET-007 | Reset Current Page | Only the selected page's local overrides are removed. |
-| SET-008 | Reset All Settings | All local overrides are removed after confirmation. |
+| SET-005 | Change channel and CDN URL | Dashboard and Status Bar display the persisted update settings. |
+| SET-006 | Reset Current Page | Only the selected page's local overrides are removed. |
+| SET-007 | Reset All Settings | All local overrides are removed after confirmation. |

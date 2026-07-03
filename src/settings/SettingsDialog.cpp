@@ -305,17 +305,15 @@ QWidget *SettingsDialog::createLayoutPage()
     m_windowHeightSpin->setSuffix(tr(" px"));
 
     m_showStatusBarCheck = new QCheckBox(tr("Show Status Bar"), page);
-    m_showToolbarCheck = new QCheckBox(tr("Show Toolbar"), page);
 
     form->addRow(tr("Initial width:"), m_windowWidthSpin);
     form->addRow(tr("Initial height:"), m_windowHeightSpin);
     form->addRow(QString(), m_showStatusBarCheck);
-    form->addRow(QString(), m_showToolbarCheck);
 
     layout->addLayout(form);
     layout->addWidget(createHint(
-        tr("Window dimensions are saved for the next application start. Status Bar and Toolbar "
-           "visibility preview immediately."),
+        tr("Window dimensions are saved for the next application start. Status Bar "
+           "visibility previews immediately."),
         page
     ));
     layout->addStretch();
@@ -327,9 +325,6 @@ QWidget *SettingsDialog::createLayoutPage()
         previewCurrentControls();
     });
     connect(m_showStatusBarCheck, &QCheckBox::toggled, this, [this] {
-        previewCurrentControls();
-    });
-    connect(m_showToolbarCheck, &QCheckBox::toggled, this, [this] {
         previewCurrentControls();
     });
 
@@ -514,7 +509,6 @@ void SettingsDialog::loadControlsFromConfig(const AppConfig &config)
     m_windowWidthSpin->setValue(config.windowWidth);
     m_windowHeightSpin->setValue(config.windowHeight);
     m_showStatusBarCheck->setChecked(config.showStatusBar);
-    m_showToolbarCheck->setChecked(config.showToolbar);
 
     setComboData(m_updateChannelCombo, config.updateChannel);
     m_automaticChecksCheck->setChecked(config.automaticUpdateChecks);
@@ -589,13 +583,6 @@ void SettingsDialog::rebuildUserOverridesFromControls()
         QStringLiteral("layout"),
         QStringLiteral("showStatusBar"),
         m_showStatusBarCheck->isChecked()
-    );
-    setOrRemoveOverride(
-        m_userOverrides,
-        m_appliedConfig.baselineConfig,
-        QStringLiteral("layout"),
-        QStringLiteral("showToolbar"),
-        m_showToolbarCheck->isChecked()
     );
 
     setOrRemoveOverride(

@@ -18,7 +18,6 @@ MainWindow
 ├── ThemeManager
 ├── Template Dashboard
 ├── Functional Settings Dialog
-├── Toolbar
 └── Status Bar
 ```
 

@@ -20,7 +20,7 @@
 ### v0.1.2 — Functional Settings
 
 - Functional Settings pages with Apply, OK, Cancel and reset actions
-- Live theme, accent color, font-scale, Status Bar and Toolbar preview
+- Live theme, accent color, font-scale and Status Bar preview
 - Persistent local overrides for layout, update, CDN, license endpoint and
   diagnostics preferences
 - ThemeManager application appearance subsystem

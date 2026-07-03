@@ -7,7 +7,6 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QStatusBar>
-#include <QToolBar>
 
 #include "core/ThemeManager.h"
 #include "settings/SettingsDialog.h"
@@ -28,12 +27,10 @@ MainWindow::MainWindow(
     resize(m_config.windowWidth, m_config.windowHeight);
 
     createMenuBar();
-    createToolBar();
     createStatusBar();
     rebuildDashboard();
 
     statusBar()->setVisible(m_config.showStatusBar);
-    m_mainToolBar->setVisible(m_config.showToolbar);
 }
 
 void MainWindow::createMenuBar()
@@ -93,23 +90,6 @@ void MainWindow::createMenuBar()
     });
 }
 
-void MainWindow::createToolBar()
-{
-    m_mainToolBar = addToolBar(tr("Main Toolbar"));
-    m_mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-    m_mainToolBar->setMovable(true);
-
-    auto *settingsAction = m_mainToolBar->addAction(tr("Settings"));
-    connect(settingsAction, &QAction::triggered, this, [this] {
-        showSettingsDialog();
-    });
-
-    auto *updatesAction = m_mainToolBar->addAction(tr("Updates"));
-    connect(updatesAction, &QAction::triggered, this, [this] {
-        showUpdatePlaceholder();
-    });
-}
-
 void MainWindow::createStatusBar()
 {
     m_licenseIndicator = new QLabel(this);
@@ -151,10 +131,6 @@ void MainWindow::applyConfiguration(const AppConfig &config)
 
     setWindowTitle(m_config.appName);
     statusBar()->setVisible(m_config.showStatusBar);
-    if (m_mainToolBar != nullptr) {
-        m_mainToolBar->setVisible(m_config.showToolbar);
-    }
-
     refreshStatusBar();
     rebuildDashboard();
 }

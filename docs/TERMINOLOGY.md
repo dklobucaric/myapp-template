@@ -10,7 +10,7 @@ A category inside the Menu Bar, such as File or Help.
 
 ## Action
 
-A clickable command inside a menu or toolbar.
+A clickable command inside a menu.
 
 ## Main Content Area
 

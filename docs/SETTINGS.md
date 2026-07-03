@@ -37,9 +37,8 @@ Apply or OK and are restored when Cancel is used before applying changes.
 
 - Initial window width and height
 - Show Status Bar
-- Show Toolbar
 
-The Status Bar and Toolbar preview immediately. Initial dimensions are used on
+The Status Bar previews immediately. Initial dimensions are used on
 the next application start.
 
 ### Updates & CDN

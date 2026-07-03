@@ -84,7 +84,6 @@ private:
     QSpinBox *m_windowWidthSpin = nullptr;
     QSpinBox *m_windowHeightSpin = nullptr;
     QCheckBox *m_showStatusBarCheck = nullptr;
-    QCheckBox *m_showToolbarCheck = nullptr;
 
     QComboBox *m_updateChannelCombo = nullptr;
     QCheckBox *m_automaticChecksCheck = nullptr;

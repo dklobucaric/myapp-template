@@ -27,7 +27,6 @@ struct AppConfig
     bool rememberWindowSize = true;
     bool rememberWindowPosition = true;
     bool showStatusBar = true;
-    bool showToolbar = true;
 
     QString updateChannel;
     bool automaticUpdateChecks = true;

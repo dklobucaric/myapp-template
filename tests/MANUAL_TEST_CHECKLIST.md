@@ -10,7 +10,6 @@
 - [ ] Accent color preview works and Cancel restores the previous appearance.
 - [ ] Font scale preview works and persists after Apply/restart.
 - [ ] Layout: Status Bar visibility previews and persists after Apply/restart.
-- [ ] Layout: Toolbar visibility previews and persists after Apply/restart.
 - [ ] Updates & CDN: channel, interval and CDN URL persist after Apply/restart.
 - [ ] License Server URLs persist after Apply/restart.
 - [ ] Reset Current Page restores profile defaults for that page.
