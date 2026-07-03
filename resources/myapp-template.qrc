@@ -1,9 +1,0 @@
-<RCC>
-  <qresource prefix="/">
-    <file alias="defaults/app-profile.json">../assets/defaults/app-profile.json</file>
-    <file alias="defaults/config.json">../assets/defaults/config.json</file>
-    <file alias="profiles/development.json">../profiles/development.json</file>
-    <file alias="profiles/staging.json">../profiles/staging.json</file>
-    <file alias="profiles/production.json">../profiles/production.json</file>
-  </qresource>
-</RCC>

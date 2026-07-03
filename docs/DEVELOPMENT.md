@@ -49,4 +49,4 @@ git status
 
 ## Qt Resources
 
-Built-in JSON files are compiled into the executable through `resources/myapp_template.qrc`. `ConfigManager` explicitly initializes this resource collection before loading `:/defaults/...` or `:/profiles/...` paths. This keeps application and unit-test behavior consistent.
+Built-in JSON files are compiled into each target through `resources/myapp_template.qrc`. CMake `CMAKE_AUTORCC` compiles the resource collection into both the application and unit-test binaries, so `ConfigManager` can load `:/defaults/...` and `:/profiles/...` paths without manual resource initialization.
